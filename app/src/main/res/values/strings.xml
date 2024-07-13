@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">TripMaster</string>
+    <string name="logo">logo</string>
+    <string name="log_in_sign_up">Log in / Sign up</string>
+    <string name="easy_trip_planning">Easy Trip Planning</string>
+    <string name="tripmaster">TripMaster</string>
+    <string name="log_out">Log out</string>
+    <string name="my_trips">My Trips</string>
+    <string name="search">Search</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="recent">Recent</string>
+    <string name="home">home</string>
+    <string name="add">add</string>
+    <string name="profile">profile</string>
+    <string name="img">img</string>
+    <string name="destination_name">Destination name</string>
+    <string name="country_name">Country name</string>
+    <string name="current_date">Current date</string>
+    <string name="login_button">login button</string>
+</resources>

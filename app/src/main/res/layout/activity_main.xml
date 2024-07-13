@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/background">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="400dp"
+        android:layout_height="280dp"
+        android:src="@drawable/logo"
+        android:contentDescription="@string/logo" />
+
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tripmaster"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_marginTop="50dp"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="50dp" />
+
+    <TextView
+        android:id="@+id/tagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/easy_trip_planning"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="50dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/log_in_sign_up"
+            android:textSize="18sp"
+            android:textColor="@android:color/black" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/login_signup_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="15dp"
+            android:contentDescription="@string/login_button"
+            android:background="@drawable/next_btn" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
