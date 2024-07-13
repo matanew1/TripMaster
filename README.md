@@ -22,7 +22,7 @@ Trip Master is a user-friendly application designed to help you manage your trav
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/trip-master.git
+   git clone https://github.com/matanew1/TripMaster.git
 2. Open the project in Android Studio.
 3. Sync the project with Gradle files.
 3. Build and run the app on an emulator or physical device.
