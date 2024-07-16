@@ -33,5 +33,12 @@ public class HomeActivity extends AppCompatActivity {
 
         tripAdapter = new TripAdapter(tripList);
         recyclerView.setAdapter(tripAdapter);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.menu_container, new Menu())
+                    .commit();
+        }
     }
 }
