@@ -1,4 +1,4 @@
-package com.example.tripmaster;
+package com.example.tripmaster.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.tripmaster.Model.Trip;
+import com.example.tripmaster.R;
 
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
     @Override
     public TripViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.trip_item, parent, false);
+                .inflate(R.layout.fragment_trip_item, parent, false);
         return new TripViewHolder(view);
     }
 

@@ -1,4 +1,4 @@
-package com.example.tripmaster;
+package com.example.tripmaster.Model;
 
 
 // Trip class

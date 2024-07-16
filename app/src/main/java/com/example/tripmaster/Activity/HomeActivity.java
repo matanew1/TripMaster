@@ -1,10 +1,14 @@
-package com.example.tripmaster;
+package com.example.tripmaster.Activity;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.tripmaster.Adapter.TripAdapter;
+import com.example.tripmaster.Model.Trip;
+import com.example.tripmaster.R;
 
 import java.util.ArrayList;
 import java.util.Date;
