@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 
+import com.example.tripmaster.Activity.ScreenSwitchListener;
 import com.example.tripmaster.Model.UserDB;
 import com.example.tripmaster.R;
 import com.example.tripmaster.Utils.Consts;
@@ -27,9 +28,7 @@ public class AuthService {
     private final ActivityResultLauncher<Intent> signInLauncher;
     private final ScreenSwitchListener screenSwitchListener;
 
-    public interface ScreenSwitchListener {
-        void switchScreen();
-    }
+
 
     public AuthService(ActivityResultLauncher<Intent> signInLauncher, ScreenSwitchListener listener) {
         this.reference = FireBaseOperations.getInstance().getDatabaseReference(Consts.USER_DB);

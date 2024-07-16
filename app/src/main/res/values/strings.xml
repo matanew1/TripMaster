@@ -17,4 +17,6 @@
     <string name="country_name">Country name</string>
     <string name="current_date">Current date</string>
     <string name="login_button">login button</string>
+    <string name="add_a_trip">New trip</string>
+    <string name="cancel">Cancel</string>
 </resources>

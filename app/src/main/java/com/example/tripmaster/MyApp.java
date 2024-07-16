@@ -11,10 +11,5 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         FireBaseOperations.getInstance();
-//        MySignal.init(this);
-
-
-
-
     }
 }

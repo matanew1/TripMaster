@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/upcoming"
-            android:backgroundTint="#FFEB3B"
+            android:backgroundTint="#FFFF"
             android:textColor="@android:color/black" />
 
         <Button
@@ -81,7 +81,6 @@
     </LinearLayout>
 
 <!--    List of my trips-->
-
     <include
         android:id="@+id/trip_list"
         android:layout_width="0dp"
