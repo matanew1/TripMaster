@@ -1,90 +1,62 @@
 package com.example.tripmaster.Activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.Toast;
-import androidx.annotation.Nullable;
+import android.widget.EditText;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.tripmaster.Adapter.EventTripAdapter;
+import com.example.tripmaster.Model.EventTrip;
 import com.example.tripmaster.R;
+import com.example.tripmaster.Utils.DatePickerHandler;
+import com.google.android.material.textfield.TextInputEditText;
+import java.util.ArrayList;
 
-public class AddTripActivity extends AppCompatActivity implements ScreenSwitchListener {
 
-    private DatePicker datePicker;
-    private SharedPreferences sharedPreferences;
+public class AddTripActivity extends AppCompatActivity implements ScreenSwitchListener{
+
+    private RecyclerView recyclerView;
+    private ArrayList<EventTrip> eventList;
+    private EventTripAdapter eventAdapter;
+    private TextInputEditText etDate;
+    private DatePickerHandler datePickerHandler;
+
+    private EditText titleTrip, countryTrip;
+    private Button cancelButton;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_trip);
 
         initializeViews();
-        initializeSharedPreferences();
-        loadSavedDate();
-        setupDatePickerListener();
-        setupCancelButton();
+        setupRecyclerView();
+        loadEventTrips();
     }
 
-    /**
-     * Initializes the UI components.
-     */
     private void initializeViews() {
-        datePicker = findViewById(R.id.datePicker);
+        recyclerView = findViewById(R.id.event_trips);
+        etDate = findViewById(R.id.etDate);
+        titleTrip = findViewById(R.id.title_trip);
+        countryTrip = findViewById(R.id.country_trip);
+        datePickerHandler = new DatePickerHandler(etDate, getSupportFragmentManager());
+        cancelButton = findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(view -> switchScreen());
     }
 
-    /**
-     * Initializes SharedPreferences for saving trip data.
-     */
-    private void initializeSharedPreferences() {
-        sharedPreferences = getSharedPreferences("TripPreferences", MODE_PRIVATE);
+    private void setupRecyclerView() {
+        eventList = new ArrayList<>();
+        eventAdapter = new EventTripAdapter(eventList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(eventAdapter);
     }
 
-    /**
-     * Loads the saved date from SharedPreferences and updates the DatePicker.
-     */
-    private void loadSavedDate() {
-        int year = sharedPreferences.getInt("saved_year", datePicker.getYear());
-        int month = sharedPreferences.getInt("saved_month", datePicker.getMonth());
-        int day = sharedPreferences.getInt("saved_day", datePicker.getDayOfMonth());
-        datePicker.updateDate(year, month, day);
-    }
-
-    /**
-     * Sets up a listener for the DatePicker to auto-save the selected date.
-     */
-    private void setupDatePickerListener() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            datePicker.setOnDateChangedListener((view, year, monthOfYear, dayOfMonth) -> saveDate(year, monthOfYear, dayOfMonth));
-        }
-    }
-
-    /**
-     * Saves the selected date to SharedPreferences.
-     *
-     * @param year      The selected year.
-     * @param month     The selected month.
-     * @param day       The selected day.
-     */
-    private void saveDate(int year, int month, int day) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("saved_year", year);
-        editor.putInt("saved_month", month);
-        editor.putInt("saved_day", day);
-        editor.apply();
-
-        String selectedDate = day + "/" + (month + 1) + "/" + year;
-        Toast.makeText(this, "Trip Date Saved: " + selectedDate, Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Sets up the cancel button to switch back to the home screen.
-     */
-    private void setupCancelButton() {
-        Button cancelButton = findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(btn -> switchScreen());
+    private void loadEventTrips() {
+        eventList.add(new EventTrip("", "", ""));
+        eventAdapter.notifyDataSetChanged();
     }
 
     @Override

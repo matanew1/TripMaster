@@ -1,8 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".Activity.AddTripActivity">
 
+    <!-- Event Type Selection -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
+        <Spinner
+            android:id="@+id/spinnerEventType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:minHeight="48dp"
+            android:padding="8dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Event Description -->
+        <EditText
+            android:id="@+id/etEventDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:autofillHints=""
+            android:minHeight="48dp"
+            android:hint="@string/event_description"
+            android:inputType="textMultiLine"
+            android:padding="8dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true" />
+
+        <!-- Add Event Button -->
+        <ImageView
+            android:id="@+id/ivAddEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add"
+            android:contentDescription="@string/add_event"
+            android:padding="8dp" />
+    </LinearLayout>
+
+    <!-- Time Picker and Delete Event -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Time Picker Icon -->
+        <ImageView
+            android:id="@+id/ivTimePicker"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_time_picker"
+            android:contentDescription="@string/time_picker"
+            android:padding="8dp" />
+
+        <!-- Time Input EditText -->
+        <EditText
+            android:id="@+id/etTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:minHeight="48dp"
+            android:hint="@string/time"
+            android:inputType="datetime"
+            android:padding="8dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true" />
+
+        <!-- Delete Event Button -->
+        <ImageView
+            android:id="@+id/ivDeleteEvent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_delete"
+            android:contentDescription="@string/delete_event"
+            android:padding="8dp" />
+    </LinearLayout>
+
+</LinearLayout>

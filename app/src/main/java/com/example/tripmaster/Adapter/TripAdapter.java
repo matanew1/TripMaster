@@ -52,7 +52,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         Glide.with(holder.itemView.getContext()).load(trip.getImageResId()).into(holder.tripImage);
         holder.tripTitle.setText(trip.getTitle());
         holder.tripLocation.setText(trip.getLocation());
-        holder.tripDate.setText(trip.getDate());
+        holder.tripDate.setText(trip.getStartDate());
     }
 
     @Override

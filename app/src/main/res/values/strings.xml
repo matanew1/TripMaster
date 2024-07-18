@@ -19,4 +19,14 @@
     <string name="login_button">login button</string>
     <string name="add_a_trip">New trip</string>
     <string name="cancel">Cancel</string>
+    <string name="event_description">Event Description</string>
+    <string name="add_event">Add Event</string>
+    <string name="time_picker">Time Picker</string>
+    <string name="time">Time</string>
+    <string name="delete_event">Delete Event</string>
+    <string name="time_hh_mm">Time (HH:MM)</string>
+    <string name="select_a_current_date">Select a current date</string>
+    <string name="title">Title</string>
+    <string name="upload">Upload</string>
+    <string name="save">Save</string>
 </resources>

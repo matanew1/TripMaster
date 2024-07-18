@@ -6,10 +6,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.tripmaster.Activity.Fragments.MenuFragment;
 import com.example.tripmaster.Adapter.TripAdapter;
+import com.example.tripmaster.Model.EventTrip;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
@@ -36,7 +38,7 @@ public class HomeActivity extends AppCompatActivity {
      * Initializes the RecyclerView.
      */
     private void initializeViews() {
-        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.trips_list);
     }
 
     /**
@@ -53,9 +55,16 @@ public class HomeActivity extends AppCompatActivity {
      * Loads trip data into the trip list.
      */
     private void loadTrips() {
-        tripList.add(new Trip(R.drawable.def_img, "Kungliga Slottet", "Stockholm, Sweden", new Date().toString()));
-        tripList.add(new Trip(R.drawable.def_img, "Kungliga Slottet", "Stockholm, Sweden", new Date().toString()));
-        // You can add more trips here or load from a data source
+        HashMap<String, ArrayList<EventTrip>> eventTrips = new HashMap<>();
+        ArrayList<EventTrip> events = new ArrayList<>();
+
+        events.add(new EventTrip("Flight", "Sweden", "09:15"));
+        eventTrips.put(new Date().toString(), events);
+
+        Trip trip = new Trip(R.drawable.def_img, "Kungliga Slottet", "Stockholm, Sweden",new Date().toString());
+        trip.setEventTrips(eventTrips);
+        tripList.add(trip);
+        tripList.add(trip);
     }
 
     /**
