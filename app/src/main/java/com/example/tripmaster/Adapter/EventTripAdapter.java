@@ -17,10 +17,9 @@ import java.util.ArrayList;
 
 public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.EventTripViewHolder> {
 
-    private ArrayList<EventTrip> eventList; // Assuming Event is a model class for your events
+    private ArrayList<EventTrip> eventList;
 
     public EventTripAdapter(ArrayList<EventTrip> eventList) {
-        super();
         this.eventList = eventList;
     }
 
@@ -35,7 +34,6 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
     @Override
     public void onBindViewHolder(@NonNull EventTripViewHolder holder, int position) {
         EventTrip event = eventList.get(position);
-        // Bind data to views in the ViewHolder
         holder.bind(event);
     }
 
@@ -44,12 +42,15 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
         return eventList.size();
     }
 
+    public ArrayList<EventTrip> getEventList() {
+        return eventList;
+    }
+
     public static class EventTripViewHolder extends RecyclerView.ViewHolder {
         private Spinner spinnerEventType;
         private EditText etEventDescription;
         private EditText etTime;
-        private final String[] eventTypes = {"Flight", "Hotel", "Restaurant", "Museum","Bar"}; // Example event types
-
+        private final String[] eventTypes = {"Flight", "Hotel", "Restaurant", "Museum", "Bar"};
 
         public EventTripViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,7 +58,6 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
             etEventDescription = itemView.findViewById(R.id.etEventDescription);
             etTime = itemView.findViewById(R.id.etTime);
 
-            // Setup spinner adapter
             ArrayAdapter<String> adapter = new ArrayAdapter<>(itemView.getContext(),
                     android.R.layout.simple_spinner_item, eventTypes);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -65,12 +65,9 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
         }
 
         public void bind(@NonNull EventTrip event) {
-            // Bind data to views
             spinnerEventType.setSelection(getEventTypePosition(event.getEventType()));
             etEventDescription.setText(event.getEventDescription());
             etTime.setText(event.getEventTime());
-
-            // Set listeners or additional logic as needed
         }
 
         private int getEventTypePosition(String eventType) {
@@ -79,9 +76,7 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
                     return i;
                 }
             }
-            return 0; // Default to the first item if not found
+            return 0;
         }
     }
-
-
 }

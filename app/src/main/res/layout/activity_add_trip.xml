@@ -101,6 +101,7 @@
     <!-- Buttons in LinearLayout -->
     <LinearLayout
         android:id="@+id/nav_btn"
+        style="?android:attr/buttonBarStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -115,6 +116,7 @@
         <!-- Upload Button -->
         <Button
             android:id="@+id/upload_btn"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/upload"
@@ -122,11 +124,12 @@
             android:backgroundTint="#FFEB3B"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black" />
 
         <!-- Save Button -->
         <Button
             android:id="@+id/save_btn"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/save"
