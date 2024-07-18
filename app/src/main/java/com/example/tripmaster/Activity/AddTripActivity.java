@@ -22,6 +22,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class AddTripActivity extends AppCompatActivity implements ScreenSwitchListener {
 
@@ -102,7 +103,7 @@ public class AddTripActivity extends AppCompatActivity implements ScreenSwitchLi
             if (!eventMap.containsKey(eventType)) {
                 eventMap.put(eventType, new ArrayList<>());
             }
-            eventMap.get(eventType).add(eventTrip);
+            Objects.requireNonNull(eventMap.get(eventType)).add(eventTrip);
         }
         currentTrip.setEventTrips(eventMap);
     }
