@@ -1,11 +1,16 @@
 package com.example.tripmaster.Model;
 
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 // Trip class
 public class Trip {
+
+    private String id;
     private int imageResId;
     private String title;
     private String location;
@@ -13,6 +18,7 @@ public class Trip {
     private String startDate;
 
     public Trip(int imageResId, String title, String location, String startDate) {
+        this.id = String.valueOf(UUID.randomUUID());
         this.imageResId = imageResId;
         this.title = title;
         this.location = location;
@@ -20,8 +26,29 @@ public class Trip {
         this.startDate = startDate;
     }
 
+    public Trip() {
+        this.id = String.valueOf(UUID.randomUUID());
+        this.imageResId = -1;
+        this.title = "";
+        this.location = "";
+        this.eventTrips = new HashMap<>();
+        this.startDate = "";
+    }
+
     public String getStartDate() {
         return startDate;
+    }
+
+    public void setImageResId(int imageResId) {
+        this.imageResId = imageResId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public void setStartDate(String startDate) {
@@ -46,5 +73,18 @@ public class Trip {
 
     public void setEventTrips(HashMap<String, ArrayList<EventTrip>> eventTrips) {
         this.eventTrips = eventTrips;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Trip{" +
+                "id='" + id + '\'' +
+                ", imageResId=" + imageResId +
+                ", title='" + title + '\'' +
+                ", location='" + location + '\'' +
+                ", eventTrips=" + eventTrips +
+                ", startDate='" + startDate + '\'' +
+                '}';
     }
 }

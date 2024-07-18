@@ -1,5 +1,7 @@
 package com.example.tripmaster.Model;
 
+import androidx.annotation.NonNull;
+
 public class EventTrip {
     private String eventType;
     private String eventDescription;
@@ -33,5 +35,15 @@ public class EventTrip {
 
     public void setEventTime(String eventTime) {
         this.eventTime = eventTime;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "EventTrip{" +
+                "eventType='" + eventType + '\'' +
+                ", eventDescription='" + eventDescription + '\'' +
+                ", eventTime='" + eventTime + '\'' +
+                '}';
     }
 }
