@@ -75,6 +75,24 @@ public class Trip {
         this.eventTrips = eventTrips;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Trip trip = (Trip) o;
+        return id.equals(trip.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+
     @NonNull
     @Override
     public String toString() {

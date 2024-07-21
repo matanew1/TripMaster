@@ -30,9 +30,11 @@ public class AddTripActivity extends AppCompatActivity implements ScreenSwitchLi
     private EventTripAdapter eventAdapter;
     private TextInputEditText etDate;
     private DataManager dataManager;
-    private Button cancelBtn, saveBtn;
+    private Button cancelBtn, saveBtn, finishTripBtn, addEventBtn;
     private EditText titleTrip, countryTrip;
     private Trip currentTrip;
+
+    private String currentEventDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +50,41 @@ public class AddTripActivity extends AppCompatActivity implements ScreenSwitchLi
     }
 
     private void initializeViews() {
+        currentEventDate = "";
         recyclerView = findViewById(R.id.event_trips);
         etDate = findViewById(R.id.etDate);
         titleTrip = findViewById(R.id.title_trip);
         countryTrip = findViewById(R.id.country_trip);
         cancelBtn = findViewById(R.id.cancel_button);
         saveBtn = findViewById(R.id.save_btn);
+        finishTripBtn = findViewById(R.id.finish_trip_btn);
+        addEventBtn = findViewById(R.id.add_event_btn);
 
+        // buttons
         setupCancelButton();
         setupSaveButton();
+        setupFinishButton();
+        setupAddEventButton();
+
+        // date picker
         setupDatePicker();
+    }
+
+    private void setupAddEventButton() {
+        addEventBtn.setOnClickListener(btn -> addNewEvent());
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void addNewEvent() {
+        eventList.add(new EventTrip());
+        eventAdapter.notifyDataSetChanged();
+    }
+
+    private void setupFinishButton() {
+        finishTripBtn.setOnClickListener(btn -> {
+            dataManager.addTrip(currentTrip);  // Add or update the trip in DataManager
+            // switchScreen();
+        });
     }
 
     private void setupCancelButton() {
@@ -73,39 +100,16 @@ public class AddTripActivity extends AppCompatActivity implements ScreenSwitchLi
         datePickerHandler.setDateSelectedListener(date -> {
             if (date != null && !date.isEmpty()) {
                 clearAll();
-                currentTrip.setStartDate(date);
-                loadTripDataFromDate(date);
+                if (Objects.equals(currentTrip.getStartDate(), ""))
+                    currentTrip.setStartDate(date);
+                currentEventDate = date;
                 loadEventsForSelectedDate(date);
             }
         });
     }
 
-
-    private void loadTripDataFromDate(String date) {
-        // Fetch the trip data for the given date
-        Trip trip = dataManager.getTripForDate(date);
-        Log.d("AddTripActivity", "Loaded trip: " + trip);
-
-        if (trip != null) {
-            // Update the UI elements with the fetched trip details
-            titleTrip.setText(trip.getTitle());
-            countryTrip.setText(trip.getLocation());
-            currentTrip = trip;  // Update currentTrip with the fetched trip data
-        } else {
-            // Clear the UI elements and create a new Trip if no trip is found
-            titleTrip.setText("");
-            countryTrip.setText("");
-            currentTrip = new Trip();
-            currentTrip.setStartDate(date);  // Set the date to the new Trip
-        }
-    }
-
-
-
     private void loadEventsForSelectedDate(String date) {
-        Log.d("DATA",dataManager.getTrips().toString());
-        ArrayList<EventTrip> events = dataManager.getEventsForDate(date);
-        Log.d("AddTripActivity", "Fetched events: " + events);
+        ArrayList<EventTrip> events = currentTrip.getEventTrips().get(date);
         if (events != null) {
             eventList.clear();
             eventList.addAll(events);
@@ -116,33 +120,20 @@ public class AddTripActivity extends AppCompatActivity implements ScreenSwitchLi
         eventAdapter.notifyDataSetChanged();
     }
 
-
-
-
     private void saveTrip() {
         if (titleTrip.getText().toString().trim().isEmpty() || countryTrip.getText().toString().trim().isEmpty()) {
             Log.d("AddTripActivity", "Trip title or location cannot be empty");
             return;
         }
-
-        Log.d("AddTripActivity", "Event List: " + eventAdapter.getEventList().toString());
         captureTripData();
         captureEventData();
-        dataManager.addTrip(currentTrip);  // Add or update the trip in DataManager
-        Log.d("AddTripActivity", "Trip saved: " + dataManager.toString());
-        // switchScreen();
+        System.out.println("SAVED DATA: " + currentTrip);
     }
-
 
     private void clearAll() {
-        titleTrip.setText("");
-        countryTrip.setText("");
         eventList.clear();
-        loadEventTrips();  // Optionally reload default events
-        currentTrip = new Trip();  // Create a new Trip instance
+        eventAdapter.notifyDataSetChanged();
     }
-
-
 
     private void captureTripData() {
         currentTrip.setTitle(titleTrip.getText().toString());
@@ -150,17 +141,11 @@ public class AddTripActivity extends AppCompatActivity implements ScreenSwitchLi
     }
 
     private void captureEventData() {
-        ArrayList<EventTrip> eventTrips = eventAdapter.getEventList();
-        HashMap<String, ArrayList<EventTrip>> eventMap = new HashMap<>();
-        for (EventTrip eventTrip : eventTrips) {
-            Log.d("AddTripActivity", "event -> " + eventTrip);
-            String eventType = eventTrip.getEventType();
-            if (!eventMap.containsKey(eventType)) {
-                eventMap.put(eventType, new ArrayList<>());
-            }
-            Objects.requireNonNull(eventMap.get(eventType)).add(eventTrip);
-        }
-        currentTrip.setEventTrips(eventMap);
+
+        // Create a new list for the current date to avoid reference issues
+        ArrayList<EventTrip> eventsForDate = new ArrayList<>(eventList);
+
+        currentTrip.getEventTrips().put(currentEventDate, eventsForDate);
     }
 
     private void setupRecyclerView() {

@@ -8,6 +8,9 @@ import com.example.tripmaster.Model.EventTrip;
 import com.example.tripmaster.Model.Trip;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class DataManager {
     private static DataManager instance;
     private ArrayList<Trip> trips;
@@ -24,7 +27,6 @@ public class DataManager {
     }
 
     public void addTrip(Trip trip) {
-        // Check if the trip already exists before adding
         if (!trips.contains(trip)) {
             trips.add(trip);
         } else {
@@ -32,28 +34,36 @@ public class DataManager {
         }
     }
 
+    public void updateTrip(Trip updatedTrip) {
+        for (int i = 0; i < trips.size(); i++) {
+            Trip existingTrip = trips.get(i);
+            if (existingTrip.getId().equals(updatedTrip.getId())) {
+                trips.set(i, updatedTrip);
+                Log.d("DataManager", "Trip updated: " + updatedTrip);
+                return;
+            }
+        }
+        Log.d("DataManager", "Trip not found for update: " + updatedTrip.toString());
+    }
+
     public ArrayList<EventTrip> getEventsForDate(String date) {
         for (Trip trip : trips) {
-            if (trip.getStartDate().equals(date)) {
-                // Combine all events from this trip
+            if (trip.getEventTrips().containsKey(date)) {
+                // Combine all events from this date
                 ArrayList<EventTrip> events = new ArrayList<>();
-                for (ArrayList<EventTrip> eventList : trip.getEventTrips().values()) {
-                    events.addAll(eventList);
-                }
+                events.addAll(trip.getEventTrips().get(date));
                 return events;
             }
         }
-        return null;
+        return new ArrayList<>();  // Return an empty list if no events are found
     }
 
     public ArrayList<Trip> getTrips() {
-        return trips;
+        return new ArrayList<>(trips);  // Return a copy to avoid external modifications
     }
 
     public Trip getTripForDate(String date) {
-        // This is a placeholder for the actual implementation
-        // You might query your database or in-memory data to fetch the trip data for the given date
-        for (Trip trip : trips) {  // Assume 'trips' is a collection of all trips
+        for (Trip trip : trips) {
             if (trip.getStartDate().equals(date)) {
                 return trip;
             }
@@ -61,4 +71,12 @@ public class DataManager {
         return null;  // Return null if no trip is found for the given date
     }
 
+    public Trip getTripById(String tripId) {
+        for (Trip trip : trips) {
+            if (trip.getId().equals(tripId)) {
+                return trip;
+            }
+        }
+        return null;  // Return null if no trip is found for the given ID
+    }
 }

@@ -18,6 +18,13 @@ public class EventTrip {
         this.eventTime = eventTime;
     }
 
+    public EventTrip() {
+        this.id = "";
+        this.eventType = "";
+        this.eventDescription = "";
+        this.eventTime = "";
+    }
+
     public String getEventType() {
         return eventType;
     }
