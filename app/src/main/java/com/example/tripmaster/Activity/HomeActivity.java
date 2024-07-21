@@ -58,17 +58,6 @@ public class HomeActivity extends AppCompatActivity {
      * Loads trip data into the trip list.
      */
     private void loadTrips() {
-        HashMap<String, ArrayList<EventTrip>> eventTrips = new HashMap<>();
-        ArrayList<EventTrip> events = new ArrayList<>();
-
-        events.add(new EventTrip("Flight", "Sweden", "09:15"));
-        eventTrips.put(new Date().toString(), events);
-
-        Trip trip = new Trip(R.drawable.def_img, "Kungliga Slottet", "Stockholm, Sweden", new Date().toString());
-        trip.setEventTrips(eventTrips);
-
-        dataManager.addTrip(trip);
-
         tripList = new ArrayList<>();
         tripList = dataManager.getTrips();
 

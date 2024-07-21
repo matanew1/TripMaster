@@ -2,12 +2,17 @@ package com.example.tripmaster.Model;
 
 import androidx.annotation.NonNull;
 
+import java.util.UUID;
+
 public class EventTrip {
+
+    private String id;
     private String eventType;
     private String eventDescription;
     private String eventTime;
 
     public EventTrip(String eventType, String eventDescription, String eventTime) {
+        this.id = String.valueOf(UUID.randomUUID());
         this.eventType = eventType;
         this.eventDescription = eventDescription;
         this.eventTime = eventTime;
@@ -45,5 +50,9 @@ public class EventTrip {
                 ", eventDescription='" + eventDescription + '\'' +
                 ", eventTime='" + eventTime + '\'' +
                 '}';
+    }
+
+    public Object getId() {
+        return this.id;
     }
 }

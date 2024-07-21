@@ -35,14 +35,7 @@
             android:focusableInTouchMode="true"
             android:clickable="true" />
 
-        <!-- Add Event Button -->
-        <ImageView
-            android:id="@+id/ivAddEvent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add"
-            android:contentDescription="@string/add_event"
-            android:padding="8dp" />
+
     </LinearLayout>
 
     <!-- Time Picker and Delete Event -->
@@ -76,14 +69,6 @@
             android:focusableInTouchMode="true"
             android:clickable="true" />
 
-        <!-- Delete Event Button -->
-        <ImageView
-            android:id="@+id/ivDeleteEvent"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_delete"
-            android:contentDescription="@string/delete_event"
-            android:padding="8dp" />
     </LinearLayout>
 
 </LinearLayout>
