@@ -1,5 +1,5 @@
 package com.example.tripmaster.Activity;
 
-public interface ScreenSwitchListener {
+public interface IScreenSwitch {
     void switchScreen();
 }

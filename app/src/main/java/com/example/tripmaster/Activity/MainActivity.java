@@ -12,10 +12,11 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity implements ScreenSwitchListener {
+public class MainActivity extends AppCompatActivity implements IScreenSwitch {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private AuthService authService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

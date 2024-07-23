@@ -121,8 +121,6 @@
             android:text="@string/upload"
             android:drawableLeft="@drawable/ic_upload"
             android:backgroundTint="#FFEB3B"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
             android:textColor="@android:color/black" />
 
         <!-- Save Button -->
@@ -133,8 +131,6 @@
             android:layout_height="wrap_content"
             android:text="@string/save"
             android:backgroundTint="#FFEB3B"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
             android:textColor="@android:color/black"/>
 
         <!-- Add event Button -->
@@ -145,8 +141,6 @@
             android:layout_height="wrap_content"
             android:text="@string/add_new_event"
             android:backgroundTint="#FFEB3B"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
             android:textColor="@android:color/black"/>
         <!-- Add event Button -->
         <Button
@@ -156,8 +150,6 @@
             android:layout_height="wrap_content"
             android:text="@string/finish"
             android:backgroundTint="#FFEB3B"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
             android:textColor="@android:color/black"/>
 
     </LinearLayout>

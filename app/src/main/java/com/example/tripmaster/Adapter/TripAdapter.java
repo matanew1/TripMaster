@@ -49,7 +49,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         Trip trip = tripList.get(position);
-        Glide.with(holder.itemView.getContext()).load(trip.getImageResId()).into(holder.tripImage);
+        Glide.with(holder.itemView.getContext()).load(trip.getFileImgName()).into(holder.tripImage);
         holder.tripTitle.setText(trip.getTitle());
         holder.tripLocation.setText(trip.getLocation());
         holder.tripDate.setText(trip.getStartDate());

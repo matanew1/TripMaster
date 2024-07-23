@@ -11,15 +11,15 @@ import java.util.UUID;
 public class Trip {
 
     private String id;
-    private int imageResId;
+    private String fileImgName;
     private String title;
     private String location;
     private HashMap<String, ArrayList<EventTrip>> eventTrips;
     private String startDate;
 
-    public Trip(int imageResId, String title, String location, String startDate) {
+    public Trip(String fileImgName, String title, String location, String startDate) {
         this.id = String.valueOf(UUID.randomUUID());
-        this.imageResId = imageResId;
+        this.fileImgName = fileImgName;
         this.title = title;
         this.location = location;
         this.eventTrips = new HashMap<>();
@@ -28,7 +28,7 @@ public class Trip {
 
     public Trip() {
         this.id = String.valueOf(UUID.randomUUID());
-        this.imageResId = -1;
+        this.fileImgName = "";
         this.title = "";
         this.location = "";
         this.eventTrips = new HashMap<>();
@@ -39,8 +39,16 @@ public class Trip {
         return startDate;
     }
 
-    public void setImageResId(int imageResId) {
-        this.imageResId = imageResId;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getFileImgName() {
+        return fileImgName;
+    }
+
+    public void setFileImgName(String fileImgName) {
+        this.fileImgName = fileImgName;
     }
 
     public void setTitle(String title) {
@@ -55,9 +63,6 @@ public class Trip {
         this.startDate = startDate;
     }
 
-    public int getImageResId() {
-        return imageResId;
-    }
 
     public String getTitle() {
         return title;
@@ -69,10 +74,6 @@ public class Trip {
 
     public HashMap<String, ArrayList<EventTrip>> getEventTrips() {
         return eventTrips;
-    }
-
-    public void setEventTrips(HashMap<String, ArrayList<EventTrip>> eventTrips) {
-        this.eventTrips = eventTrips;
     }
 
     public String getId() {
@@ -98,7 +99,7 @@ public class Trip {
     public String toString() {
         return "Trip{" +
                 "id='" + id + '\'' +
-                ", imageResId=" + imageResId +
+                ", fileImgName=" + fileImgName +
                 ", title='" + title + '\'' +
                 ", location='" + location + '\'' +
                 ", eventTrips=" + eventTrips +

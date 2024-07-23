@@ -6,7 +6,7 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 
-import com.example.tripmaster.Activity.ScreenSwitchListener;
+import com.example.tripmaster.Activity.IScreenSwitch;
 import com.example.tripmaster.Model.UserDB;
 import com.example.tripmaster.R;
 import com.example.tripmaster.Utils.Consts;
@@ -26,21 +26,22 @@ public class AuthService {
     private final DatabaseReference reference;
     private boolean isNewUser;
     private final ActivityResultLauncher<Intent> signInLauncher;
-    private final ScreenSwitchListener screenSwitchListener;
+    private final IScreenSwitch IScreenSwitch;
 
 
 
-    public AuthService(ActivityResultLauncher<Intent> signInLauncher, ScreenSwitchListener listener) {
+    public AuthService(ActivityResultLauncher<Intent> signInLauncher, IScreenSwitch listener) {
         this.reference = FireBaseOperations.getInstance().getDatabaseReference(Consts.USER_DB);
         this.signInLauncher = signInLauncher;
-        this.screenSwitchListener = listener;
+        this.IScreenSwitch = listener;
     }
 
     public void login(FirebaseUser currentUser) {
         if (currentUser == null) {
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.EmailBuilder().build(),
-                    new AuthUI.IdpConfig.GoogleBuilder().build()
+                    new AuthUI.IdpConfig.GoogleBuilder().build(),
+                    new AuthUI.IdpConfig.AnonymousBuilder().build()
             );
 
             Intent signInIntent = AuthUI.getInstance()
@@ -65,7 +66,7 @@ public class AuthService {
 
                 if (!dataSnapshot.exists()) {
                     createNewUserDB(currentUser);
-                    screenSwitchListener.switchScreen();
+                    IScreenSwitch.switchScreen();
                 } else {
                     for (DataSnapshot snap : dataSnapshot.getChildren()) {
                         if (currentUser.getUid().equals(snap.getKey())) {
@@ -78,7 +79,7 @@ public class AuthService {
                     if (isNewUser) {
                         createNewUserDB(currentUser);
                     }
-                    screenSwitchListener.switchScreen();
+                    IScreenSwitch.switchScreen();
                 }
             }
 

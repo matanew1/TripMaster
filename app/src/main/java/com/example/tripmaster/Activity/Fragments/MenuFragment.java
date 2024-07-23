@@ -13,10 +13,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.tripmaster.Activity.AddTripActivity;
 import com.example.tripmaster.Activity.HomeActivity;
-import com.example.tripmaster.Activity.ScreenSwitchListener;
+import com.example.tripmaster.Activity.IScreenSwitch;
 import com.example.tripmaster.R;
 
-public class MenuFragment extends Fragment implements ScreenSwitchListener {
+public class MenuFragment extends Fragment implements IScreenSwitch {
     private Class<?> target;
 
     @Nullable
