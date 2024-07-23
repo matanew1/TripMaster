@@ -9,6 +9,7 @@ import com.example.tripmaster.R;
 import com.example.tripmaster.Service.AuthService;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements IScreenSwitch {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_main);
-
+        FirebaseApp.initializeApp(this);
         authService = new AuthService(signInLauncher, this);
     }
 

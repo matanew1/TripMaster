@@ -21,7 +21,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
 
     private RecyclerView recyclerView;
     private TripAdapter tripAdapter;
-    private List<Trip> tripList;
+    private ArrayList<Trip> tripList;
     private DataManager dataManager;
     private FirebaseAuth firebaseAuth;
     private Button logoutButton;
@@ -66,7 +66,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
      */
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        tripAdapter = new TripAdapter(tripList);
+        tripAdapter = new TripAdapter(this,tripList);
         recyclerView.setAdapter(tripAdapter);
     }
 

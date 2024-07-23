@@ -1,5 +1,9 @@
 package com.example.tripmaster.Adapter;
 
+import android.content.Context;
+import android.net.Uri;
+import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +16,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder> {
 
-    private final List<Trip> tripList;
+    private final ArrayList<Trip> tripList;
+    private final Context context;
 
-    public TripAdapter(List<Trip> tripList) {
+    public TripAdapter(Context context, ArrayList<Trip> tripList) {
+        this.context = context;
         this.tripList = tripList;
     }
 
@@ -49,7 +60,35 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         Trip trip = tripList.get(position);
-        Glide.with(holder.itemView.getContext()).load(trip.getFileImgName()).into(holder.tripImage);
+
+        // Get the Firebase Storage reference
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference fileRef = storageRef.child("uploads/" + trip.getFileImgName());
+
+        // Create a local file in the cache directory
+        File localFile;
+        try {
+            localFile = File.createTempFile("images", ".jpeg", context.getCacheDir());
+        } catch (IOException e) {
+            Log.e("TripAdapter", "Error creating local file", e);
+            holder.tripImage.setImageResource(R.drawable.def_img); // Set a placeholder image
+            return;
+        }
+
+        // Download the file
+        fileRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
+            // File downloaded successfully
+            Uri localFileUri = Uri.fromFile(localFile);
+            Glide.with(holder.itemView.getContext())
+                    .load(localFileUri)
+                    .into(holder.tripImage);
+        }).addOnFailureListener(exception -> {
+            // Download failed
+            Log.e("TripAdapter", "Image download failed: ", exception);
+            holder.tripImage.setImageResource(R.drawable.def_img); // Set a placeholder image
+        });
+
         holder.tripTitle.setText(trip.getTitle());
         holder.tripLocation.setText(trip.getLocation());
         holder.tripDate.setText(trip.getStartDate());
@@ -60,4 +99,3 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         return tripList.size();
     }
 }
-

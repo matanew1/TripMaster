@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.firebase.ui.auth)
 
     //Glide
+    implementation(libs.okhttp3.integration)
+    implementation(libs.firebase.ui.storage.v800)
     implementation(libs.glide)
     annotationProcessor(libs.compiler)
+
 }
