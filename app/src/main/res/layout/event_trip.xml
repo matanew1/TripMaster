@@ -69,6 +69,14 @@
             android:focusableInTouchMode="true"
             android:clickable="true" />
 
+        <ImageView
+            android:id="@+id/deleteEvent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_delete"
+            android:contentDescription="@string/time_picker"
+            android:padding="8dp" />
+
     </LinearLayout>
 
 </LinearLayout>

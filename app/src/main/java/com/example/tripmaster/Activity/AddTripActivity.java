@@ -205,10 +205,27 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
 
     private void setupRecyclerView() {
         eventList = new ArrayList<>();
-        eventAdapter = new EventTripAdapter(eventList);
+        eventAdapter = new EventTripAdapter(eventList, position -> {
+            // Remove event from the list
+            eventList.remove(position);
+            eventAdapter.notifyItemRemoved(position);
+            eventAdapter.notifyItemRangeChanged(position, eventList.size());
+
+            // Update currentTrip's event map
+            if (currentTrip.getEventTrips().containsKey(currentEventDate)) {
+                if (eventList.isEmpty()) {
+                    currentTrip.getEventTrips().remove(currentEventDate);
+                } else {
+                    ArrayList<EventTrip> eventsForDate = new ArrayList<>(eventList);
+                    currentTrip.getEventTrips().put(currentEventDate, eventsForDate);
+                }
+            }
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(eventAdapter);
     }
+
+
 
     private void loadEventTrips() {
         eventList.add(new EventTrip(EventTypeEnum.EMPTY, "", ""));

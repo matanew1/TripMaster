@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
@@ -22,11 +23,12 @@ import java.util.ArrayList;
 public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.EventTripViewHolder> {
 
     private ArrayList<EventTrip> eventList;
-    private final String[] eventTypeLabels; // String array for event type labels
+    private final String[] eventTypeLabels;
+    private final OnDeleteClickListener onDeleteClickListener;
 
-    public EventTripAdapter(ArrayList<EventTrip> eventList) {
+    public EventTripAdapter(ArrayList<EventTrip> eventList, OnDeleteClickListener onDeleteClickListener) {
         this.eventList = eventList;
-        // Convert EventTypeEnum values to a string array
+        this.onDeleteClickListener = onDeleteClickListener;
         eventTypeLabels = new String[EventTypeEnum.values().length];
         for (int i = 0; i < EventTypeEnum.values().length; i++) {
             eventTypeLabels[i] = EventTypeEnum.values()[i].toString();
@@ -52,24 +54,25 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
         return eventList.size();
     }
 
-    public ArrayList<EventTrip> getEventList() {
-        return eventList;
+    public interface OnDeleteClickListener {
+        void onDeleteClick(int position);
     }
 
     public class EventTripViewHolder extends RecyclerView.ViewHolder {
         private Spinner spinnerEventType;
         private EditText etEventDescription;
         private EditText etTime;
+        private ImageView deleteEvent;
         private final EventTypeEnum[] eventTypes = EventTypeEnum.values();
-        private boolean isUserInteracting = true; // Flag to handle updates
+        private boolean isUserInteracting = true;
 
         public EventTripViewHolder(@NonNull View itemView) {
             super(itemView);
             spinnerEventType = itemView.findViewById(R.id.spinnerEventType);
             etEventDescription = itemView.findViewById(R.id.etEventDescription);
             etTime = itemView.findViewById(R.id.etTime);
+            deleteEvent = itemView.findViewById(R.id.deleteEvent);
 
-            // Setup spinner adapter using ArrayAdapter
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
                     itemView.getContext(),
                     android.R.layout.simple_spinner_item,
@@ -78,11 +81,6 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerEventType.setAdapter(adapter);
 
-            /*
-             * TODO: Empty is the default value. Need to disable selection of EMPTY
-             */
-
-            // Setup listener for spinner
             spinnerEventType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -96,25 +94,26 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                    // No action needed
+                public void onNothingSelected(AdapterView<?> parent) {}
+            });
+
+            deleteEvent.setOnClickListener(v -> {
+                if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    onDeleteClickListener.onDeleteClick(getAdapterPosition());
                 }
             });
         }
 
         public void bind(@NonNull EventTrip event) {
-            // Avoid spinner listener triggering
             isUserInteracting = false;
             etEventDescription.setText(event.getEventDescription());
             etTime.setText(event.getEventTime());
 
-            // Handle spinner state
             EventTypeEnum eventType = event.getEventType();
             int position = eventType != null ? getEventTypePosition(eventType) : 0;
-            spinnerEventType.setSelection(position, false); // Avoid triggering onItemSelected
+            spinnerEventType.setSelection(position, false);
             isUserInteracting = true;
 
-            // Add listeners to update event data
             etEventDescription.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -150,7 +149,7 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
                     return i;
                 }
             }
-            return 0;  // Default to the first item if not found
+            return 0;
         }
     }
 }
