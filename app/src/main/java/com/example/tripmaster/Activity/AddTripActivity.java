@@ -1,5 +1,6 @@
 package com.example.tripmaster.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tripmaster.Adapter.EventTripAdapter;
 import com.example.tripmaster.Data.DataManager;
 import com.example.tripmaster.Model.EventTrip;
+import com.example.tripmaster.Model.EventTypeEnum;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
 import com.example.tripmaster.Service.FileStorageService;
@@ -24,6 +26,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import java.util.Objects;
 
+@SuppressLint("NotifyDataSetChanged")
 public class AddTripActivity extends AppCompatActivity implements IScreenSwitch {
 
     private static final int PICK_FILE_REQUEST = 1;
@@ -113,6 +116,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         addEventBtn.setOnClickListener(btn -> addNewEvent());
     }
 
+
     private void addNewEvent() {
         eventList.add(new EventTrip());
         eventAdapter.notifyDataSetChanged();
@@ -158,15 +162,28 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         eventAdapter.notifyDataSetChanged();
     }
 
+    private boolean isTripDataValid() {
+        // Check if any of the required fields are empty
+        return !titleTrip.getText().toString().trim().isEmpty() &&
+                !countryTrip.getText().toString().trim().isEmpty() &&
+                !currentTrip.getStartDate().isEmpty();  // Example of another field to check
+    }
+
     private void saveTrip() {
-        if (titleTrip.getText().toString().trim().isEmpty() || countryTrip.getText().toString().trim().isEmpty()) {
-            Log.d("AddTripActivity", "Trip title or location cannot be empty");
+        // Validate trip data
+        if (!isTripDataValid()) {
+            Toast.makeText(this, "Trip title, location, or start date cannot be empty", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // Capture trip and event data
         captureTripData();
         captureEventData();
+
+        // Print saved data to console
         System.out.println("SAVED DATA: " + currentTrip);
     }
+
 
     private void clearAll() {
         eventList.clear();
@@ -194,7 +211,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
     }
 
     private void loadEventTrips() {
-        eventList.add(new EventTrip("", "", ""));
+        eventList.add(new EventTrip(EventTypeEnum.EMPTY, "", ""));
         eventAdapter.notifyDataSetChanged();
     }
 

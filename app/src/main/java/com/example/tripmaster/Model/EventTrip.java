@@ -2,16 +2,18 @@ package com.example.tripmaster.Model;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.database.core.view.Event;
+
 import java.util.UUID;
 
 public class EventTrip {
 
     private String id;
-    private String eventType;
+    private EventTypeEnum eventType;
     private String eventDescription;
     private String eventTime;
 
-    public EventTrip(String eventType, String eventDescription, String eventTime) {
+    public EventTrip(EventTypeEnum eventType, String eventDescription, String eventTime) {
         this.id = String.valueOf(UUID.randomUUID());
         this.eventType = eventType;
         this.eventDescription = eventDescription;
@@ -20,16 +22,16 @@ public class EventTrip {
 
     public EventTrip() {
         this.id = "";
-        this.eventType = "";
+        this.eventType = EventTypeEnum.EMPTY;
         this.eventDescription = "";
         this.eventTime = "";
     }
 
-    public String getEventType() {
+    public EventTypeEnum getEventType() {
         return eventType;
     }
 
-    public void setEventType(String eventType) {
+    public void setEventType(EventTypeEnum eventType) {
         this.eventType = eventType;
     }
 
@@ -53,7 +55,7 @@ public class EventTrip {
     @Override
     public String toString() {
         return "EventTrip{" +
-                "eventType='" + eventType + '\'' +
+                "eventType='" + eventType.getLabel() + '\'' +
                 ", eventDescription='" + eventDescription + '\'' +
                 ", eventTime='" + eventTime + '\'' +
                 '}';
