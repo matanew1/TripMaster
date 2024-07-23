@@ -78,6 +78,10 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerEventType.setAdapter(adapter);
 
+            /*
+             * TODO: Empty is the default value. Need to disable selection of EMPTY
+             */
+
             // Setup listener for spinner
             spinnerEventType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
