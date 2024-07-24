@@ -22,6 +22,8 @@ import com.example.tripmaster.R;
 import com.example.tripmaster.Service.FileStorageService;
 import com.example.tripmaster.Utils.DatePickerHandler;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -32,6 +34,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
     private static final int PICK_FILE_REQUEST = 1;
     private FileStorageService fileStorageService;
 
+    private FirebaseUser currentUser;
     private RecyclerView recyclerView;
     private ArrayList<EventTrip> eventList;
     private EventTripAdapter eventAdapter;
@@ -47,7 +50,11 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_trip);
 
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         dataManager = DataManager.getInstance();
+
+        dataManager.initialize(currentUser);
+
         currentTrip = new Trip();  // Initialize currentTrip once
         fileStorageService = new FileStorageService();
 
@@ -124,7 +131,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
 
     private void setupFinishButton() {
         finishTripBtn.setOnClickListener(btn -> {
-            dataManager.addTrip(currentTrip);  // Add or update the trip in DataManager
+            dataManager.addTrip(currentUser, currentTrip);  // Add or update the trip in DataManager
              switchScreen();
         });
     }

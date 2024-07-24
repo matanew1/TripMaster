@@ -12,6 +12,7 @@ import com.example.tripmaster.R;
 import com.example.tripmaster.Utils.Consts;
 import com.example.tripmaster.Utils.FireBaseOperations;
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,8 +29,6 @@ public class AuthService {
     private final ActivityResultLauncher<Intent> signInLauncher;
     private final IScreenSwitch IScreenSwitch;
 
-
-
     public AuthService(ActivityResultLauncher<Intent> signInLauncher, IScreenSwitch listener) {
         this.reference = FireBaseOperations.getInstance().getDatabaseReference(Consts.USER_DB);
         this.signInLauncher = signInLauncher;
@@ -37,6 +36,7 @@ public class AuthService {
     }
 
     public void login(FirebaseUser currentUser) {
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -59,28 +59,15 @@ public class AuthService {
     }
 
     private void checkAlreadyExists(FirebaseUser currentUser) {
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                isNewUser = true;
-
-                if (!dataSnapshot.exists()) {
-                    createNewUserDB(currentUser);
-                    IScreenSwitch.switchScreen();
+                if (dataSnapshot.exists()) {
+                    loadUserFromDB(currentUser);
                 } else {
-                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                        if (currentUser.getUid().equals(snap.getKey())) {
-                            loadUserFromDB(currentUser);
-                            isNewUser = false;
-                            break;
-                        }
-                    }
-
-                    if (isNewUser) {
-                        createNewUserDB(currentUser);
-                    }
-                    IScreenSwitch.switchScreen();
+                    createNewUserDB(currentUser);
                 }
+                IScreenSwitch.switchScreen();
             }
 
             @Override
@@ -91,8 +78,9 @@ public class AuthService {
     }
 
     private void createNewUserDB(FirebaseUser currentUser) {
-        UserDB.getInstance().setName(currentUser.getDisplayName());
-        reference.child(currentUser.getUid()).setValue(UserDB.getInstance());
+        UserDB userDB = UserDB.getInstance();
+        userDB.setName(currentUser.getDisplayName());
+        reference.child(currentUser.getUid()).setValue(userDB);
     }
 
     private void loadUserFromDB(FirebaseUser currentUser) {

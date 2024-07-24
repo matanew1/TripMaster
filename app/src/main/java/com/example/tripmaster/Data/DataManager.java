@@ -2,21 +2,21 @@ package com.example.tripmaster.Data;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.example.tripmaster.Model.EventTrip;
 import com.example.tripmaster.Model.Trip;
+import com.example.tripmaster.Model.UserDB;
+import com.example.tripmaster.Service.DatabaseService;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DataManager {
     private static DataManager instance;
     private ArrayList<Trip> trips;
+    private DatabaseService databaseService;
 
     private DataManager() {
         trips = new ArrayList<>();
+        databaseService = new DatabaseService();
     }
 
     public static DataManager getInstance() {
@@ -26,57 +26,33 @@ public class DataManager {
         return instance;
     }
 
-    public void addTrip(Trip trip) {
+    public void initialize(FirebaseUser currentUser) {
+        // Load user data from the database
+        databaseService.loadUserData(currentUser, new DatabaseService.DataLoadCallback() {
+            @Override
+            public void onDataLoaded(UserDB userDB) {
+                trips = userDB.getAllTrips();
+                Log.d("DataManager", "User data loaded successfully");
+            }
+
+            @Override
+            public void onDataLoadFailed(String error) {
+                Log.e("DataManager", "Error loading user data: " + error);
+            }
+        });
+    }
+
+    public void addTrip(FirebaseUser currentUser, Trip trip) {
         if (!trips.contains(trip)) {
             trips.add(trip);
+            // Save trip to the database
+            databaseService.saveTrip(currentUser, trip);
         } else {
             Log.d("DataManager", "Trip already exists: " + trip.toString());
         }
     }
-
-    public void updateTrip(Trip updatedTrip) {
-        for (int i = 0; i < trips.size(); i++) {
-            Trip existingTrip = trips.get(i);
-            if (existingTrip.getId().equals(updatedTrip.getId())) {
-                trips.set(i, updatedTrip);
-                Log.d("DataManager", "Trip updated: " + updatedTrip);
-                return;
-            }
-        }
-        Log.d("DataManager", "Trip not found for update: " + updatedTrip.toString());
-    }
-
-    public ArrayList<EventTrip> getEventsForDate(String date) {
-        for (Trip trip : trips) {
-            if (trip.getEventTrips().containsKey(date)) {
-                // Combine all events from this date
-                ArrayList<EventTrip> events = new ArrayList<>();
-                events.addAll(trip.getEventTrips().get(date));
-                return events;
-            }
-        }
-        return new ArrayList<>();  // Return an empty list if no events are found
-    }
-
     public ArrayList<Trip> getTrips() {
         return new ArrayList<>(trips);  // Return a copy to avoid external modifications
     }
 
-    public Trip getTripForDate(String date) {
-        for (Trip trip : trips) {
-            if (trip.getStartDate().equals(date)) {
-                return trip;
-            }
-        }
-        return null;  // Return null if no trip is found for the given date
-    }
-
-    public Trip getTripById(String tripId) {
-        for (Trip trip : trips) {
-            if (trip.getId().equals(tripId)) {
-                return trip;
-            }
-        }
-        return null;  // Return null if no trip is found for the given ID
-    }
 }
