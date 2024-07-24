@@ -166,13 +166,14 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         // Check if any of the required fields are empty
         return !titleTrip.getText().toString().trim().isEmpty() &&
                 !countryTrip.getText().toString().trim().isEmpty() &&
+                eventList.stream().noneMatch(event -> event.getEventType() == EventTypeEnum.EMPTY) &&
                 !currentTrip.getStartDate().isEmpty();  // Example of another field to check
     }
 
     private void saveTrip() {
         // Validate trip data
         if (!isTripDataValid()) {
-            Toast.makeText(this, "Trip title, location, or start date cannot be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Trip title, location, event type or start date cannot be empty", Toast.LENGTH_SHORT).show();
             return;
         }
 
