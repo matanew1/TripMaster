@@ -35,14 +35,14 @@ public class MainActivity extends AppCompatActivity implements IScreenSwitch {
 
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         currentUser = mAuth.getCurrentUser();
-        authService.login(currentUser);
+        authService.login();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         currentUser = mAuth.getCurrentUser();
-        authService.login(currentUser);
+        authService.login();
     }
 
     @Override

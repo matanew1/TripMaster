@@ -21,24 +21,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class AuthService {
     private final DatabaseReference reference;
-    private boolean isNewUser;
     private final ActivityResultLauncher<Intent> signInLauncher;
-    private final IScreenSwitch IScreenSwitch;
+    private final IScreenSwitch screenSwitchListener;
 
     public AuthService(ActivityResultLauncher<Intent> signInLauncher, IScreenSwitch listener) {
         this.reference = FireBaseOperations.getInstance().getDatabaseReference(Consts.USER_DB);
         this.signInLauncher = signInLauncher;
-        this.IScreenSwitch = listener;
+        this.screenSwitchListener = listener;
     }
 
-    public void login(FirebaseUser currentUser) {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    public void login() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -46,6 +45,7 @@ public class AuthService {
                     new AuthUI.IdpConfig.AnonymousBuilder().build()
             );
 
+            //TODO: fix google signin
             Intent signInIntent = AuthUI.getInstance()
                     .createSignInIntentBuilder()
                     .setAvailableProviders(providers)
@@ -69,7 +69,7 @@ public class AuthService {
                 } else {
                     createNewUserDB(currentUser);
                 }
-                IScreenSwitch.switchScreen();
+                screenSwitchListener.switchScreen();
             }
 
             @Override
@@ -91,9 +91,17 @@ public class AuthService {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 UserDB userDB = snapshot.getValue(UserDB.class);
                 if (userDB != null) {
-                    // Handle the conversion from Map to List
-                    Map<String, Trip> tripsMap = (Map<String, Trip>) snapshot.child("allTrips").getValue();
-                    if (tripsMap != null) {
+                    // Check if 'allTrips' is a Map or List
+                    Object tripsObject = snapshot.child("allTrips").getValue();
+                    if (tripsObject instanceof Map) {
+                        Map<String, Trip> tripsMap = (Map<String, Trip>) tripsObject;
+                        userDB.setAllTrips(tripsMap);
+                    } else if (tripsObject instanceof List) {
+                        List<Trip> tripsList = (List<Trip>) tripsObject;
+                        Map<String, Trip> tripsMap = new HashMap<>();
+                        for (Trip trip : tripsList) {
+                            tripsMap.put(trip.getId(), trip); // Adjust according to how you identify each trip
+                        }
                         userDB.setAllTrips(tripsMap);
                     }
                     UserDB.getInstance().setUser(userDB);
