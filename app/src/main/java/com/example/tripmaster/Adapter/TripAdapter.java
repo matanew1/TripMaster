@@ -97,7 +97,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         holder.tripDate.setText(trip.getStartDate());
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TripViewActivity.class);
-            intent.putExtra("clicked_trip", (Serializable) trip);
+            intent.putExtra("clicked_trip", trip);
             context.startActivity(intent);
         });
     }

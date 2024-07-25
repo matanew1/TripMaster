@@ -44,6 +44,12 @@ public class EventTripViewAdapter extends RecyclerView.Adapter<EventTripViewAdap
         return eventTrips.size();
     }
 
+    public void updateEvents(ArrayList<EventTrip> newEvents) {
+        eventTrips.clear();
+        eventTrips.addAll(newEvents);
+        notifyDataSetChanged();
+    }
+
     public static class EventTripViewHolder extends RecyclerView.ViewHolder {
         private ImageView eventIcon;
         private TextView eventType, eventDate, eventDesc;

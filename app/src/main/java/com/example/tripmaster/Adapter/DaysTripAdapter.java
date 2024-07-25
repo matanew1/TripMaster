@@ -12,41 +12,51 @@ import com.example.tripmaster.R;
 
 import java.util.ArrayList;
 
-public class DaysTripAdapter extends RecyclerView.Adapter<DaysTripAdapter.DaysTripViewHolder> {
+public class DaysTripAdapter extends RecyclerView.Adapter<DaysTripAdapter.ViewHolder> {
 
-    private ArrayList<String> eventsDate;
+    private ArrayList<String> eventDates;
+    private OnDateClickListener onDateClickListener;
 
-    public DaysTripAdapter(ArrayList<String> eventsDate) {
-        this.eventsDate = eventsDate;
+    public DaysTripAdapter(ArrayList<String> eventDates, OnDateClickListener listener) {
+        this.eventDates = eventDates;
+        this.onDateClickListener = listener;
     }
 
     @NonNull
     @Override
-    public DaysTripViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.date_event_of_trip, parent, false);
-        return new DaysTripViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.date_event_of_trip, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DaysTripViewHolder holder, int position) {
-        String eventDate = eventsDate.get(position);
-
-        // Bind data to your views here
-        holder.date.setText(eventDate);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String date = eventDates.get(position);
+        holder.dateButtonView.setText(date);
+        holder.dateButtonView.setOnClickListener(v -> {
+            if (onDateClickListener != null) {
+                onDateClickListener.onDateClick(date);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return this.eventsDate.size();
+        return eventDates.size();
     }
 
-    public static class DaysTripViewHolder extends RecyclerView.ViewHolder {
+    public interface OnDateClickListener {
+        void onDateClick(String date);
+    }
 
-        private Button date;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        Button dateButtonView;
 
-        public DaysTripViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.date = itemView.findViewById(R.id.current_date_btn);
+            dateButtonView = itemView.findViewById(R.id.current_date_btn); // Ensure this ID matches your layout
         }
     }
 }
+
