@@ -2,20 +2,24 @@ package com.example.tripmaster.Model;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class UserDB {
+public class UserDB implements Serializable {
 
-    private ArrayList<Trip> allTrips;
+    private Map<String, Trip> allTrips;  // Change to Map for Firebase deserialization
     private String name;
     private static UserDB userDB = null;
 
     private UserDB() {
-        allTrips = new ArrayList<>();
+        allTrips = new HashMap<>();  // Initialize as HashMap
     }
 
     private UserDB(FirebaseUser currentUser) {
-        allTrips = new ArrayList<>();
+        allTrips = new HashMap<>();  // Initialize as HashMap
         this.name = currentUser.getDisplayName();
     }
 
@@ -38,7 +42,11 @@ public class UserDB {
     }
 
     public ArrayList<Trip> getAllTrips() {
-        return allTrips;
+        return new ArrayList<>(allTrips.values());  // Convert Map to List
+    }
+
+    public void setAllTrips(Map<String, Trip> allTrips) {
+        this.allTrips = allTrips;
     }
 
     public void setName(String name) {
@@ -50,10 +58,6 @@ public class UserDB {
     }
 
     public void addTrip(Trip trip) {
-        allTrips.add(0, trip);
-    }
-
-    public void setAllTrips(ArrayList<Trip> allTrips) {
-        this.allTrips = allTrips;
+        allTrips.put(trip.getId(), trip);  // Ensure Trip has a unique ID
     }
 }

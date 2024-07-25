@@ -2,54 +2,87 @@ package com.example.tripmaster.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.tripmaster.Activity.Fragments.MenuFragment;
 import com.example.tripmaster.Adapter.TripAdapter;
-import com.example.tripmaster.Data.DataManager;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
+import com.example.tripmaster.Service.DatabaseService;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
 
     private RecyclerView recyclerView;
-    private TripAdapter tripAdapter;
     private ArrayList<Trip> tripList;
-    private DataManager dataManager;
     private FirebaseAuth firebaseAuth;
-    private Button logoutButton;
+    private TripAdapter tripAdapter;
+    private DatabaseService databaseService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
-        dataManager = DataManager.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
+        databaseService = new DatabaseService(); // Initialize DatabaseService
 
         initializeViews();
-        loadTrips();
         setupRecyclerView();
 
         if (savedInstanceState == null) {
             loadMenuFragment();
         }
+
+        // Load trips from DatabaseService
+        loadTrips();
     }
 
-    /**
-     * Initializes the RecyclerView.
-     */
     private void initializeViews() {
         recyclerView = findViewById(R.id.trips_list);
-        logoutButton = findViewById(R.id.logout_button);
+        Button logoutButton = findViewById(R.id.logout_button);
         logoutButton.setOnClickListener(btn -> logout());
+    }
+
+    private void setupRecyclerView() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        tripList = new ArrayList<>();
+        tripAdapter = new TripAdapter(this, tripList);
+        recyclerView.setAdapter(tripAdapter);
+    }
+
+    private void loadTrips() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            databaseService.loadTrips(currentUser, new DatabaseService.TripsLoadCallback() {
+                @Override
+                public void onTripsLoaded(ArrayList<Trip> trips) {
+                    System.out.println("EEEEEEEEEEEEEEEEEEEE " + trips);
+                    // Update tripList and notify the adapter
+                    tripList.clear();
+                    tripList.addAll(trips);
+                    tripAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onTripsLoadFailed(String error) {
+                    // Handle the error, e.g., show a toast or log it
+                    Log.e("HomeActivity", "Error loading trips: " + error);
+                }
+            });
+        } else {
+            // Handle case when user is not logged in
+            Log.w("HomeActivity", "No user is currently logged in.");
+        }
     }
 
     private void logout() {
@@ -61,27 +94,6 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         switchScreen();
     }
 
-    /**
-     * Sets up the RecyclerView with a LinearLayoutManager and adapter.
-     */
-    private void setupRecyclerView() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        tripAdapter = new TripAdapter(this,tripList);
-        recyclerView.setAdapter(tripAdapter);
-    }
-
-    /**
-     * Loads trip data into the trip list.
-     */
-    private void loadTrips() {
-        tripList = new ArrayList<>();
-        tripList = dataManager.getTrips();
-
-    }
-
-    /**
-     * Loads the MenuFragment into the specified container.
-     */
     private void loadMenuFragment() {
         getSupportFragmentManager()
                 .beginTransaction()

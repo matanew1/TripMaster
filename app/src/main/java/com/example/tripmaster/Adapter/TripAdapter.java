@@ -1,6 +1,7 @@
 package com.example.tripmaster.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.tripmaster.Activity.TripViewActivity;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
 import com.google.firebase.storage.FirebaseStorage;
@@ -92,6 +94,10 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         holder.tripTitle.setText(trip.getTitle());
         holder.tripLocation.setText(trip.getLocation());
         holder.tripDate.setText(trip.getStartDate());
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, TripViewActivity.class);
+            context.startActivity(intent);
+        });
     }
 
     @Override

@@ -32,4 +32,10 @@
     <string name="add_new_event">Add event</string>
     <string name="finish">Finish</string>
     <string name="file_uploaded">file uploaded</string>
+    <string name="back_button_description">Back</string>
+    <string name="country">COUNTRY</string>
+    <string name="share">share</string>
+    <string name="event_type_view">Event type view</string>
+    <string name="event_date_view">date</string>
+    <string name="date_event">Date event</string>
 </resources>

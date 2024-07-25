@@ -1,14 +1,12 @@
 package com.example.tripmaster.Model;
 
-
 import androidx.annotation.NonNull;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-// Trip class
-public class Trip {
+public class Trip{
 
     private String id;
     private String fileImgName;
@@ -63,7 +61,6 @@ public class Trip {
         this.startDate = startDate;
     }
 
-
     public String getTitle() {
         return title;
     }
@@ -74,6 +71,10 @@ public class Trip {
 
     public HashMap<String, ArrayList<EventTrip>> getEventTrips() {
         return eventTrips;
+    }
+
+    public void setEventTrips(HashMap<String, ArrayList<EventTrip>> eventTrips) {
+        this.eventTrips = eventTrips;
     }
 
     public String getId() {
@@ -92,7 +93,6 @@ public class Trip {
     public int hashCode() {
         return id.hashCode();
     }
-
 
     @NonNull
     @Override

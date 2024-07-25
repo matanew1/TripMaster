@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class DatabaseService {
 
@@ -24,15 +25,7 @@ public class DatabaseService {
         this.userDatabaseReference = FireBaseOperations.getInstance().getDatabaseReference(Consts.USER_DB);
     }
 
-    public void saveUserData(FirebaseUser currentUser) {
-        String userId = currentUser.getUid();
-        UserDB userDB = UserDB.getInstance();
-        userDatabaseReference.child(userId).setValue(userDB)
-                .addOnSuccessListener(aVoid -> Log.d("DatabaseService", "User data saved successfully"))
-                .addOnFailureListener(e -> Log.e("DatabaseService", "Error saving user data: ", e));
-    }
-
-    public void loadUserData(FirebaseUser currentUser, final DataLoadCallback callback) {
+    public void loadUserData(@NonNull FirebaseUser currentUser, final DataLoadCallback callback) {
         String userId = currentUser.getUid();
         userDatabaseReference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -40,6 +33,11 @@ public class DatabaseService {
                 if (snapshot.exists()) {
                     UserDB userDB = snapshot.getValue(UserDB.class);
                     if (userDB != null) {
+                        // Handle the conversion from Map to List
+                        Map<String, Trip> tripsMap = (Map<String, Trip>) snapshot.child("allTrips").getValue();
+                        if (tripsMap != null) {
+                            userDB.setAllTrips(tripsMap);
+                        }
                         UserDB.getInstance().setUser(userDB);
                         callback.onDataLoaded(userDB);
                     } else {
@@ -58,26 +56,29 @@ public class DatabaseService {
         });
     }
 
-    public void saveTrip(FirebaseUser currentUser, Trip trip) {
+    public void saveTrip(@NonNull FirebaseUser currentUser, @NonNull Trip trip) {
         String userId = currentUser.getUid();
-        userDatabaseReference.child(userId).child("allTrips").child(trip.getId()).setValue(trip)
+        DatabaseReference tripRef = userDatabaseReference.child(userId).child("allTrips").child(trip.getId());
+
+        // Save the Trip object
+        tripRef.setValue(trip)
                 .addOnSuccessListener(aVoid -> Log.d("DatabaseService", "Trip data saved successfully"))
                 .addOnFailureListener(e -> Log.e("DatabaseService", "Error saving trip data: ", e));
     }
 
-    public void loadTrips(FirebaseUser currentUser, final TripsLoadCallback callback) {
+    public void loadTrips(@NonNull FirebaseUser currentUser, final TripsLoadCallback callback) {
         String userId = currentUser.getUid();
         userDatabaseReference.child(userId).child("allTrips").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ArrayList<Trip> trips = new ArrayList<>();
+                ArrayList<Trip> tripsList = new ArrayList<>();
                 for (DataSnapshot tripSnapshot : snapshot.getChildren()) {
                     Trip trip = tripSnapshot.getValue(Trip.class);
                     if (trip != null) {
-                        trips.add(trip);
+                        tripsList.add(trip);
                     }
                 }
-                callback.onTripsLoaded(trips);
+                callback.onTripsLoaded(tripsList);
             }
 
             @Override

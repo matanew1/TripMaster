@@ -36,6 +36,7 @@ public class MenuFragment extends Fragment implements IScreenSwitch {
             switchScreen();
         });
         view.findViewById(R.id.add_icon).setOnClickListener(v -> {
+            Toast.makeText(requireActivity(), "Add clicked", Toast.LENGTH_SHORT).show();
             // Handle add click
             target = AddTripActivity.class; // Replace with actual target class
             switchScreen();

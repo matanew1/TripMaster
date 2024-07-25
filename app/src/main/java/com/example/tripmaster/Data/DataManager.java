@@ -26,6 +26,10 @@ public class DataManager {
         return instance;
     }
 
+    public DatabaseService getDatabaseService() {
+        return databaseService;
+    }
+
     public void initialize(FirebaseUser currentUser) {
         // Load user data from the database
         databaseService.loadUserData(currentUser, new DatabaseService.DataLoadCallback() {

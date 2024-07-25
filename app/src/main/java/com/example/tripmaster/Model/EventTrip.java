@@ -4,11 +4,12 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.database.core.view.Event;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 public class EventTrip {
 
-    private String id;
+    private final String id;
     private EventTypeEnum eventType;
     private String eventDescription;
     private String eventTime;

@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 
 import com.example.tripmaster.Activity.IScreenSwitch;
+import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.Model.UserDB;
 import com.example.tripmaster.R;
 import com.example.tripmaster.Utils.Consts;
@@ -21,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class AuthService {
@@ -87,7 +89,15 @@ public class AuthService {
         reference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                UserDB.getInstance().setUser(Objects.requireNonNull(snapshot.getValue(UserDB.class)));
+                UserDB userDB = snapshot.getValue(UserDB.class);
+                if (userDB != null) {
+                    // Handle the conversion from Map to List
+                    Map<String, Trip> tripsMap = (Map<String, Trip>) snapshot.child("allTrips").getValue();
+                    if (tripsMap != null) {
+                        userDB.setAllTrips(tripsMap);
+                    }
+                    UserDB.getInstance().setUser(userDB);
+                }
             }
 
             @Override
