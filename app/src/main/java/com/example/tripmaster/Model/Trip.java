@@ -1,13 +1,15 @@
 package com.example.tripmaster.Model;
 
 import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Trip{
+public class Trip implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private String id;
     private String fileImgName;
     private String title;
@@ -16,7 +18,7 @@ public class Trip{
     private String startDate;
 
     public Trip(String fileImgName, String title, String location, String startDate) {
-        this.id = String.valueOf(UUID.randomUUID());
+        this.id = UUID.randomUUID().toString();
         this.fileImgName = fileImgName;
         this.title = title;
         this.location = location;
@@ -25,7 +27,7 @@ public class Trip{
     }
 
     public Trip() {
-        this.id = String.valueOf(UUID.randomUUID());
+        this.id = UUID.randomUUID().toString();
         this.fileImgName = "";
         this.title = "";
         this.location = "";
@@ -99,7 +101,7 @@ public class Trip{
     public String toString() {
         return "Trip{" +
                 "id='" + id + '\'' +
-                ", fileImgName=" + fileImgName +
+                ", fileImgName='" + fileImgName + '\'' +
                 ", title='" + title + '\'' +
                 ", location='" + location + '\'' +
                 ", eventTrips=" + eventTrips +

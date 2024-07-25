@@ -7,8 +7,9 @@ import com.google.firebase.database.core.view.Event;
 import java.io.Serializable;
 import java.util.UUID;
 
-public class EventTrip {
+public class EventTrip implements Serializable{
 
+    private static final long serialVersionUID = 1L;
     private final String id;
     private EventTypeEnum eventType;
     private String eventDescription;

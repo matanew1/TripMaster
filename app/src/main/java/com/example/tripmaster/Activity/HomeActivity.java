@@ -66,7 +66,6 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
             databaseService.loadTrips(currentUser, new DatabaseService.TripsLoadCallback() {
                 @Override
                 public void onTripsLoaded(ArrayList<Trip> trips) {
-                    System.out.println("EEEEEEEEEEEEEEEEEEEE " + trips);
                     // Update tripList and notify the adapter
                     tripList.clear();
                     tripList.addAll(trips);

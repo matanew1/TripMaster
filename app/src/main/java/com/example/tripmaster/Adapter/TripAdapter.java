@@ -23,6 +23,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +97,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         holder.tripDate.setText(trip.getStartDate());
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TripViewActivity.class);
+            intent.putExtra("clicked_trip", (Serializable) trip);
             context.startActivity(intent);
         });
     }
