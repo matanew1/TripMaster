@@ -1,5 +1,7 @@
 package com.example.tripmaster.Model;
 
+import com.example.tripmaster.R;
+
 public enum EventTypeEnum {
 
     EMPTY("<empty>"),
@@ -26,5 +28,23 @@ public enum EventTypeEnum {
             }
         }
         return EMPTY; // Default value if not found
+    }
+
+    public int getImageResource() {
+        switch (this) {
+            case FLIGHT:
+                return R.drawable.ic_flight;
+            case HOTEL:
+                return R.drawable.ic_hotel;
+            case RESTAURANT:
+                return R.drawable.ic_restaurant;
+            case MUSEUM:
+                return R.drawable.ic_museum;
+            case BAR:
+                return R.drawable.ic_bar;
+            case EMPTY:
+            default:
+                return R.drawable.ic_default; // Default image for EMPTY or unknown types
+        }
     }
 }

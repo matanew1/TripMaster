@@ -45,7 +45,6 @@ public class AuthService {
                     new AuthUI.IdpConfig.AnonymousBuilder().build()
             );
 
-            //TODO: fix google signin
             Intent signInIntent = AuthUI.getInstance()
                     .createSignInIntentBuilder()
                     .setAvailableProviders(providers)
@@ -53,6 +52,7 @@ public class AuthService {
                     .setLogo(R.drawable.logo)
                     .setIsSmartLockEnabled(false)
                     .build();
+
             signInLauncher.launch(signInIntent);
         } else {
             UserDB.init(currentUser);

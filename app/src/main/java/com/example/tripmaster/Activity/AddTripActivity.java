@@ -131,8 +131,9 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
 
     private void setupFinishButton() {
         finishTripBtn.setOnClickListener(btn -> {
+            if (!saveTrip())  return;
             dataManager.addTrip(currentUser, currentTrip);  // Add or update the trip in DataManager
-             switchScreen();
+            switchScreen();
         });
     }
 
@@ -177,11 +178,11 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
                 !currentTrip.getStartDate().isEmpty();  // Example of another field to check
     }
 
-    private void saveTrip() {
+    private boolean saveTrip() {
         // Validate trip data
         if (!isTripDataValid()) {
             Toast.makeText(this, "Trip title, location, event type or start date cannot be empty", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
 
         // Capture trip and event data
@@ -189,7 +190,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         captureEventData();
 
         // Print saved data to console
-        System.out.println("SAVED DATA: " + currentTrip);
+        return true;
     }
 
 

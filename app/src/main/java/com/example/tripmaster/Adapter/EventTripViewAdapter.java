@@ -37,7 +37,7 @@ public class EventTripViewAdapter extends RecyclerView.Adapter<EventTripViewAdap
         holder.eventDate.setText(eventTrip.getEventTime());
         holder.eventDesc.setText(eventTrip.getEventDescription());
         holder.eventType.setText(eventTrip.getEventType().getLabel());
-        //TODO: add icon picker image depends on event type
+        holder.eventIcon.setImageResource(eventTrip.getEventType().getImageResource());
     }
 
     @Override

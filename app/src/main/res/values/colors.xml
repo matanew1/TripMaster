@@ -3,4 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FF0000</color>
+    <color name="button_default">#FFEB3B</color> <!-- Default background color -->
+    <color name="button_pressed">#FBC02D</color> <!-- Pressed background color -->
+    <color name="button_focused">#F9A825</color> <!-- Focused background color -->
+    <color name="button_border">#000000</color> <!-- Border color -->
 </resources>
