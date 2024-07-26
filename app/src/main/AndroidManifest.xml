@@ -37,10 +37,6 @@
         <activity
             android:name=".Activity.MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Activity.HomeActivity"
@@ -55,6 +51,16 @@
             android:name=".Activity.TripViewActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
+        </activity>
+        <!-- Splash Activity -->
+        <activity
+            android:name=".Activity.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
     </application>

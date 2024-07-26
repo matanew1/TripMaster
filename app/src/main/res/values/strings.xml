@@ -39,4 +39,5 @@
     <string name="event_date_view">date</string>
     <string name="date_event">Date event</string>
     <string name="default_web_client_id">965655000628-o1hlllmg6q2ik8eaq7mqsohgbsecq2kf.apps.googleusercontent.com</string>
+    <string name="loading">Loading...</string>
 </resources>
