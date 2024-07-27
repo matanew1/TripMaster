@@ -20,14 +20,16 @@ public class Trip implements Serializable {
     private String location;
     private HashMap<String, ArrayList<EventTrip>> eventTrips;
     private String startDate;
+    private boolean shared;
 
-    public Trip(String fileImgName, String title, String location, String startDate) {
+    public Trip(String fileImgName, String title, String location, String startDate, boolean shared) {
         this.id = UUID.randomUUID().toString();
         this.fileImgName = fileImgName;
         this.title = title;
         this.location = location;
         this.eventTrips = new HashMap<>();
         this.startDate = startDate;
+        this.shared = shared;
     }
 
     public Trip() {
@@ -37,6 +39,7 @@ public class Trip implements Serializable {
         this.location = "";
         this.eventTrips = new HashMap<>();
         this.startDate = "";
+        this.shared = false;
     }
 
     public String getStartDate() {
@@ -93,6 +96,14 @@ public class Trip implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Trip trip = (Trip) o;
         return id.equals(trip.id);
+    }
+
+    public boolean isShared() {
+        return shared;
+    }
+
+    public void setShared(boolean shared) {
+        this.shared = shared;
     }
 
     @Override

@@ -54,8 +54,8 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
             setGlobalTrips();
             setButtonState(globalTripsBtn, myTripsBtn);
         });
-        setGlobalTrips();
-        setButtonState(globalTripsBtn, myTripsBtn);
+        setMyTrips();
+        setButtonState(myTripsBtn, globalTripsBtn);
     }
 
     private void setButtonState(Button selectedButton, Button otherButton) {

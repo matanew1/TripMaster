@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@drawable/background">
 
     <Button
@@ -31,6 +31,20 @@
         app:layout_constraintStart_toEndOf="@id/cancel_button"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="25dp"/>
+
+    <!-- Share Trip Switch -->
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/shared"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share trip"
+        android:backgroundTint="#FFEB3B"
+        android:textColor="@android:color/black"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@id/title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Date Selection -->
     <com.google.android.material.textfield.TextInputEditText
@@ -84,7 +98,7 @@
 
     </LinearLayout>
 
-
+    <!-- Events RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/event_trips"
         android:layout_width="0dp"
@@ -98,6 +112,7 @@
         android:layout_marginEnd="16dp"
         tools:listitem="@layout/event_trip" />
 
+    <!-- Navigation Buttons -->
     <LinearLayout
         android:id="@+id/nav_btn"
         style="?android:attr/buttonBarStyle"
@@ -132,7 +147,7 @@
             android:backgroundTint="#FFEB3B"
             android:textColor="@android:color/black"/>
 
-        <!-- Add event Button -->
+        <!-- Add Event Button -->
         <Button
             android:id="@+id/add_event_btn"
             style="?android:attr/buttonBarButtonStyle"
@@ -141,7 +156,8 @@
             android:text="@string/add_new_event"
             android:backgroundTint="#FFEB3B"
             android:textColor="@android:color/black"/>
-        <!-- Add event Button -->
+
+        <!-- Finish Trip Button -->
         <Button
             android:id="@+id/finish_trip_btn"
             style="?android:attr/buttonBarButtonStyle"
@@ -152,6 +168,5 @@
             android:textColor="@android:color/black"/>
 
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

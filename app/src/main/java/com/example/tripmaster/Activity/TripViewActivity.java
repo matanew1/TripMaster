@@ -47,9 +47,6 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> switchScreen());
 
-        ImageView shareButton = findViewById(R.id.icShare);
-        shareButton.setOnClickListener(v -> shareTripDetails());
-
         RecyclerView recyclerViewDays = findViewById(R.id.recyclerViewDays);
         RecyclerView recyclerViewEvents = findViewById(R.id.recyclerViewEvents);
 
@@ -69,36 +66,6 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
             String defaultDate = eventDates.get(0);
             ArrayList<EventTrip> events = new ArrayList<>(currentTrip.getEventTrips().getOrDefault(defaultDate, new ArrayList<>()));
             eventTripViewAdapter.updateEvents(events);
-        }
-    }
-
-    private boolean isWhatsAppInstalled() {
-        PackageManager pm = getPackageManager();
-        try {
-            pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
-
-    private void shareTripDetails() {
-        String tripDetails = "Check out my trip: \n" + currentTrip.toString();
-
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My Trip Details");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, tripDetails);
-
-        // Check if WhatsApp is installed
-        if (isWhatsAppInstalled()) {
-            shareIntent.setPackage("com.whatsapp");
-            startActivity(shareIntent);
-        } else {
-            // Show a toast message
-            Toast.makeText(this, "WhatsApp is not installed. Using general sharing.", Toast.LENGTH_SHORT).show();
-            // Fallback to general sharing if WhatsApp is not installed
-            startActivity(Intent.createChooser(shareIntent, "Share Trip Details"));
         }
     }
 

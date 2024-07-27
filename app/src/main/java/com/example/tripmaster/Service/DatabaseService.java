@@ -81,10 +81,15 @@ public class DatabaseService {
         userDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Stream through all user snapshots and their trips
                 List<Trip> globalTripsList = StreamSupport.stream(snapshot.getChildren().spliterator(), false)
                         .flatMap(userSnapshot -> StreamSupport.stream(userSnapshot.child("allTrips").getChildren().spliterator(), false)
-                                .map(tripSnapshot -> tripSnapshot.getValue(Trip.class)))
+                                .map(tripSnapshot -> tripSnapshot.getValue(Trip.class))
+                                .filter(trip -> trip != null && trip.isShared())
+                        )
                         .collect(Collectors.toList());
+
+                // Pass the filtered list to the callback
                 callback.onTripsLoaded(new ArrayList<>(globalTripsList));
             }
 
@@ -95,6 +100,7 @@ public class DatabaseService {
             }
         });
     }
+
 
     public interface DataLoadCallback {
         void onDataLoaded(UserDB userDB);

@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,6 +41,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
     private EventTripAdapter eventAdapter;
     private TextInputEditText etDate;
     private EditText titleTrip, countryTrip;
+    private SwitchCompat sharedSw;
     private Button cancelBtn, saveBtn, finishTripBtn, addEventBtn, uploadBtn;
     private Trip currentTrip;
     private String currentEventDate;
@@ -71,6 +73,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         finishTripBtn = findViewById(R.id.finish_trip_btn);
         addEventBtn = findViewById(R.id.add_event_btn);
         uploadBtn = findViewById(R.id.upload_btn);
+        sharedSw = findViewById(R.id.shared);
 
         setupButtons();
         setupDatePicker();
@@ -82,6 +85,9 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         finishTripBtn.setOnClickListener(v -> finishTrip());
         addEventBtn.setOnClickListener(v -> addNewEvent());
         uploadBtn.setOnClickListener(v -> openFilePicker());
+        sharedSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            currentTrip.setShared(isChecked);
+        });
     }
 
     private void setupDatePicker() {
