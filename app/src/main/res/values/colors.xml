@@ -7,4 +7,5 @@
     <color name="button_pressed">#FBC02D</color> <!-- Pressed background color -->
     <color name="button_focused">#F9A825</color> <!-- Focused background color -->
     <color name="button_border">#000000</color> <!-- Border color -->
+    <color name="card_color">#F579A6CE</color>
 </resources>

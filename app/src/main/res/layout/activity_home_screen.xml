@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/background">
 
 <!--    Log out button-->
@@ -67,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/global"
-            android:backgroundTint="#f3f3f3"
+            android:backgroundTint="@color/white"
             android:textColor="@android:color/black" />
 
         <Button
@@ -76,23 +77,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/my_trips"
-            android:backgroundTint="#f3f3f3"
+            android:backgroundTint="@color/white"
             android:textColor="@android:color/black"/>
     </LinearLayout>
 
-<!--    List of my trips-->
-    <include
-        android:id="@+id/trip_list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/trips_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        layout="@layout/fragment_trips"
         app:layout_constraintTop_toBottomOf="@id/tab_layout"
         app:layout_constraintBottom_toTopOf="@id/menu_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginEnd="16dp"
+        tools:listitem="@layout/trip_item"/>
 
 <!--    App bar -->
     <FrameLayout
