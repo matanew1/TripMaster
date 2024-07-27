@@ -30,13 +30,10 @@ public class MenuFragment extends Fragment implements IScreenSwitch {
         super.onViewCreated(view, savedInstanceState);
 
         view.findViewById(R.id.home_icon).setOnClickListener(v -> {
-            Toast.makeText(requireActivity(), "Home clicked", Toast.LENGTH_SHORT).show();
-            // Optionally set target here if you want to switch screens
             target = HomeActivity.class; // Replace with actual target class
             switchScreen();
         });
         view.findViewById(R.id.add_icon).setOnClickListener(v -> {
-            Toast.makeText(requireActivity(), "Add clicked", Toast.LENGTH_SHORT).show();
             // Handle add click
             target = AddTripActivity.class; // Replace with actual target class
             switchScreen();

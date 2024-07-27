@@ -1,5 +1,6 @@
 package com.example.tripmaster.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,15 +9,15 @@ import android.view.animation.AnimationUtils;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.tripmaster.R;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
-    private View splashImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        splashImage = findViewById(R.id.splash_image);
+        View splashImage = findViewById(R.id.splash_image);
 
         // Load pendulum animation
         Animation pendulum = AnimationUtils.loadAnimation(this, R.anim.pendulum);

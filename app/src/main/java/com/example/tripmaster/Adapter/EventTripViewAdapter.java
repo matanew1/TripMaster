@@ -1,5 +1,6 @@
 package com.example.tripmaster.Adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.example.tripmaster.R;
 
 import java.util.ArrayList;
 
+@SuppressLint("NotifyDataSetChanged")
 public class EventTripViewAdapter extends RecyclerView.Adapter<EventTripViewAdapter.EventTripViewHolder> {
 
     private ArrayList<EventTrip> eventTrips;

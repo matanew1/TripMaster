@@ -25,12 +25,7 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
 
     private static final String TAG = "TripViewActivity"; // Tag for logging
 
-    private RecyclerView recyclerViewDays;
-    private RecyclerView recyclerViewEvents;
     private Trip currentTrip;
-    private Button backButton;
-    private ImageView shareButton;
-    private DaysTripAdapter daysTripAdapter;
     private EventTripViewAdapter eventTripViewAdapter;
 
     @Override
@@ -49,19 +44,19 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
             loadMenuFragment();
         }
 
-        backButton = findViewById(R.id.back_button);
+        Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> switchScreen());
 
-        shareButton = findViewById(R.id.icShare);
+        ImageView shareButton = findViewById(R.id.icShare);
         shareButton.setOnClickListener(v -> shareTripDetails());
 
-        recyclerViewDays = findViewById(R.id.recyclerViewDays);
-        recyclerViewEvents = findViewById(R.id.recyclerViewEvents);
+        RecyclerView recyclerViewDays = findViewById(R.id.recyclerViewDays);
+        RecyclerView recyclerViewEvents = findViewById(R.id.recyclerViewEvents);
 
         // Set up RecyclerView for Days
         recyclerViewDays.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         ArrayList<String> eventDates = new ArrayList<>(currentTrip.getEventTrips().keySet());
-        daysTripAdapter = new DaysTripAdapter(eventDates, this);
+        DaysTripAdapter daysTripAdapter = new DaysTripAdapter(eventDates, this);
         recyclerViewDays.setAdapter(daysTripAdapter);
 
         // Set up RecyclerView for Events

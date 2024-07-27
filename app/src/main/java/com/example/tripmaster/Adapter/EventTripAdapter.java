@@ -62,7 +62,6 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
         private Spinner spinnerEventType;
         private EditText etEventDescription;
         private EditText etTime;
-        private ImageView deleteEvent;
         private final EventTypeEnum[] eventTypes = EventTypeEnum.values();
         private boolean isUserInteracting = true;
 
@@ -71,7 +70,7 @@ public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.Even
             spinnerEventType = itemView.findViewById(R.id.spinnerEventType);
             etEventDescription = itemView.findViewById(R.id.etEventDescription);
             etTime = itemView.findViewById(R.id.etTime);
-            deleteEvent = itemView.findViewById(R.id.deleteEvent);
+            ImageView deleteEvent = itemView.findViewById(R.id.deleteEvent);
 
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
                     itemView.getContext(),

@@ -18,15 +18,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements IScreenSwitch {
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
     private AuthService authService;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
         authService = new AuthService(signInLauncher, this);
@@ -38,14 +36,12 @@ public class MainActivity extends AppCompatActivity implements IScreenSwitch {
     );
 
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
-        currentUser = mAuth.getCurrentUser();
         authService.login();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        currentUser = mAuth.getCurrentUser();
         authService.login();
     }
 

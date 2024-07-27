@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -32,16 +31,16 @@ import java.util.Objects;
 public class AddTripActivity extends AppCompatActivity implements IScreenSwitch {
 
     private static final int PICK_FILE_REQUEST = 1;
-    private FileStorageService fileStorageService;
 
     private FirebaseUser currentUser;
+    private FileStorageService fileStorageService;
+    private DataManager dataManager;
     private RecyclerView recyclerView;
     private ArrayList<EventTrip> eventList;
     private EventTripAdapter eventAdapter;
     private TextInputEditText etDate;
-    private DataManager dataManager;
-    private Button cancelBtn, saveBtn, finishTripBtn, addEventBtn, uploadBtn;
     private EditText titleTrip, countryTrip;
+    private Button cancelBtn, saveBtn, finishTripBtn, addEventBtn, uploadBtn;
     private Trip currentTrip;
     private String currentEventDate;
 
@@ -50,21 +49,19 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_trip);
 
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        dataManager = DataManager.getInstance();
-
-        dataManager.initialize(currentUser);
-
-        currentTrip = new Trip();  // Initialize currentTrip once
-        fileStorageService = new FileStorageService();
-
-        initializeViews();
+        initializeComponents();
         setupRecyclerView();
-        loadEventTrips();
+        loadDefaultEventTrips();
     }
 
-    private void initializeViews() {
-        currentEventDate = "";
+    private void initializeComponents() {
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        dataManager = DataManager.getInstance();
+        dataManager.initialize(currentUser);
+
+        currentTrip = new Trip();
+        fileStorageService = new FileStorageService();
+
         recyclerView = findViewById(R.id.event_trips);
         etDate = findViewById(R.id.etDate);
         titleTrip = findViewById(R.id.title_trip);
@@ -75,24 +72,47 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         addEventBtn = findViewById(R.id.add_event_btn);
         uploadBtn = findViewById(R.id.upload_btn);
 
-        // buttons
-        setupCancelButton();
-        setupSaveButton();
-        setupFinishButton();
-        setupAddEventButton();
-        setupUploadButton();
-
-        // date picker
+        setupButtons();
         setupDatePicker();
     }
 
-    private void setupUploadButton() {
-        uploadBtn.setOnClickListener(v -> {
-            // Launch file picker
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("*/*");
-            startActivityForResult(Intent.createChooser(intent, "Select a file"), PICK_FILE_REQUEST);
+    private void setupButtons() {
+        cancelBtn.setOnClickListener(v -> switchScreen());
+        saveBtn.setOnClickListener(v -> saveTrip());
+        finishTripBtn.setOnClickListener(v -> finishTrip());
+        addEventBtn.setOnClickListener(v -> addNewEvent());
+        uploadBtn.setOnClickListener(v -> openFilePicker());
+    }
+
+    private void setupDatePicker() {
+        DatePickerHandler datePickerHandler = new DatePickerHandler(etDate, getSupportFragmentManager());
+        datePickerHandler.setDateSelectedListener(date -> {
+            if (date != null && !date.isEmpty()) {
+                currentEventDate = date;
+                if (Objects.equals(currentTrip.getStartDate(), "")) {
+                    currentTrip.setStartDate(date);
+                }
+                loadEventsForSelectedDate(date);
+            }
         });
+    }
+
+    private void setupRecyclerView() {
+        eventList = new ArrayList<>();
+        eventAdapter = new EventTripAdapter(eventList, this::removeEvent);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(eventAdapter);
+    }
+
+    private void loadDefaultEventTrips() {
+        eventList.add(new EventTrip(EventTypeEnum.EMPTY, "", ""));
+        eventAdapter.notifyDataSetChanged();
+    }
+
+    private void openFilePicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        startActivityForResult(Intent.createChooser(intent, "Select a file"), PICK_FILE_REQUEST);
     }
 
     @Override
@@ -101,61 +121,77 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
 
         if (requestCode == PICK_FILE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri fileUri = data.getData();
-
-            // Use FileStorageService to upload the file
-            fileStorageService.uploadFile(fileUri, new FileStorageService.FileUploadCallback() {
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(AddTripActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
-                    currentTrip.setFileImgName(fileUri.getLastPathSegment());
-                    uploadBtn.setText(fileUri.getLastPathSegment());
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    Toast.makeText(AddTripActivity.this, "File upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+            uploadFile(fileUri);
         }
     }
 
-    private void setupAddEventButton() {
-        addEventBtn.setOnClickListener(btn -> addNewEvent());
-    }
+    private void uploadFile(Uri fileUri) {
+        fileStorageService.uploadFile(fileUri, new FileStorageService.FileUploadCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(AddTripActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
+                currentTrip.setFileImgName(fileUri.getLastPathSegment());
+                uploadBtn.setText(fileUri.getLastPathSegment());
+            }
 
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(AddTripActivity.this, "File upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void addNewEvent() {
         eventList.add(new EventTrip());
         eventAdapter.notifyDataSetChanged();
     }
 
-    private void setupFinishButton() {
-        finishTripBtn.setOnClickListener(btn -> {
-            if (!saveTrip())  return;
-            dataManager.addTrip(currentUser, currentTrip);  // Add or update the trip in DataManager
-            switchScreen();
-        });
-    }
+    private void removeEvent(int position) {
+        eventList.remove(position);
+        eventAdapter.notifyItemRemoved(position);
+        eventAdapter.notifyItemRangeChanged(position, eventList.size());
 
-    private void setupCancelButton() {
-        cancelBtn.setOnClickListener(btn -> switchScreen());
-    }
-
-    private void setupSaveButton() {
-        saveBtn.setOnClickListener(v -> saveTrip());
-    }
-
-    private void setupDatePicker() {
-        DatePickerHandler datePickerHandler = new DatePickerHandler(etDate, getSupportFragmentManager());
-        datePickerHandler.setDateSelectedListener(date -> {
-            if (date != null && !date.isEmpty()) {
-                clearAll();
-                if (Objects.equals(currentTrip.getStartDate(), ""))
-                    currentTrip.setStartDate(date);
-                currentEventDate = date;
-                loadEventsForSelectedDate(date);
+        if (currentTrip.getEventTrips().containsKey(currentEventDate)) {
+            if (eventList.isEmpty()) {
+                currentTrip.getEventTrips().remove(currentEventDate);
+            } else {
+                currentTrip.getEventTrips().put(currentEventDate, new ArrayList<>(eventList));
             }
-        });
+        }
+    }
+
+    private void finishTrip() {
+        if (saveTrip()) {
+            dataManager.addTrip(currentUser, currentTrip);
+            switchScreen();
+        }
+    }
+
+    private boolean saveTrip() {
+        if (!isTripDataValid()) {
+            Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        captureTripData();
+        captureEventData();
+        return true;
+    }
+
+    private boolean isTripDataValid() {
+        return !titleTrip.getText().toString().trim().isEmpty() &&
+                !countryTrip.getText().toString().trim().isEmpty() &&
+                eventList.stream().noneMatch(event -> event.getEventType() == EventTypeEnum.EMPTY) &&
+                !currentTrip.getStartDate().isEmpty();
+    }
+
+    private void captureTripData() {
+        currentTrip.setTitle(titleTrip.getText().toString());
+        currentTrip.setLocation(countryTrip.getText().toString());
+    }
+
+    private void captureEventData() {
+        currentTrip.getEventTrips().put(currentEventDate, new ArrayList<>(eventList));
     }
 
     private void loadEventsForSelectedDate(String date) {
@@ -165,79 +201,8 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
             eventList.addAll(events);
         } else {
             eventList.clear();
-            loadEventTrips();  // Optionally load default events
+            loadDefaultEventTrips();
         }
-        eventAdapter.notifyDataSetChanged();
-    }
-
-    private boolean isTripDataValid() {
-        // Check if any of the required fields are empty
-        return !titleTrip.getText().toString().trim().isEmpty() &&
-                !countryTrip.getText().toString().trim().isEmpty() &&
-                eventList.stream().noneMatch(event -> event.getEventType() == EventTypeEnum.EMPTY) &&
-                !currentTrip.getStartDate().isEmpty();  // Example of another field to check
-    }
-
-    private boolean saveTrip() {
-        // Validate trip data
-        if (!isTripDataValid()) {
-            Toast.makeText(this, "Trip title, location, event type or start date cannot be empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        // Capture trip and event data
-        captureTripData();
-        captureEventData();
-
-        // Print saved data to console
-        return true;
-    }
-
-
-    private void clearAll() {
-        eventList.clear();
-        eventAdapter.notifyDataSetChanged();
-    }
-
-    private void captureTripData() {
-        currentTrip.setTitle(titleTrip.getText().toString());
-        currentTrip.setLocation(countryTrip.getText().toString());
-    }
-
-    private void captureEventData() {
-
-        // Create a new list for the current date to avoid reference issues
-        ArrayList<EventTrip> eventsForDate = new ArrayList<>(eventList);
-
-        currentTrip.getEventTrips().put(currentEventDate, eventsForDate);
-    }
-
-    private void setupRecyclerView() {
-        eventList = new ArrayList<>();
-        eventAdapter = new EventTripAdapter(eventList, position -> {
-            // Remove event from the list
-            eventList.remove(position);
-            eventAdapter.notifyItemRemoved(position);
-            eventAdapter.notifyItemRangeChanged(position, eventList.size());
-
-            // Update currentTrip's event map
-            if (currentTrip.getEventTrips().containsKey(currentEventDate)) {
-                if (eventList.isEmpty()) {
-                    currentTrip.getEventTrips().remove(currentEventDate);
-                } else {
-                    ArrayList<EventTrip> eventsForDate = new ArrayList<>(eventList);
-                    currentTrip.getEventTrips().put(currentEventDate, eventsForDate);
-                }
-            }
-        });
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(eventAdapter);
-    }
-
-
-
-    private void loadEventTrips() {
-        eventList.add(new EventTrip(EventTypeEnum.EMPTY, "", ""));
         eventAdapter.notifyDataSetChanged();
     }
 

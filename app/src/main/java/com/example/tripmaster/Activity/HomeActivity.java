@@ -1,5 +1,6 @@
 package com.example.tripmaster.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripmaster.Activity.Fragments.MenuFragment;
 import com.example.tripmaster.Adapter.TripAdapter;
+import com.example.tripmaster.Data.DataManager;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
 import com.example.tripmaster.Service.DatabaseService;
@@ -19,13 +21,14 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
+@SuppressLint("NotifyDataSetChanged")
 public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
 
     private RecyclerView recyclerView;
     private ArrayList<Trip> tripList;
     private FirebaseAuth firebaseAuth;
     private TripAdapter tripAdapter;
-    private DatabaseService databaseService;
+    private DataManager dataManager;
     private Button globalTripsBtn, myTripsBtn;
 
     @Override
@@ -34,7 +37,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         setContentView(R.layout.activity_home_screen);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        databaseService = new DatabaseService();
+        dataManager = DataManager.getInstance();
 
         initializeViews();
         setupRecyclerView();
@@ -56,8 +59,8 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
     }
 
     private void setButtonState(Button selectedButton, Button otherButton) {
-        selectedButton.setBackgroundColor(getResources().getColor(R.color.button_default));
-        otherButton.setBackgroundColor(getResources().getColor(R.color.white));
+        selectedButton.setBackgroundColor(getResources().getColor(R.color.button_default, getResources().newTheme()));
+        otherButton.setBackgroundColor(getResources().getColor(R.color.white, getResources().newTheme()));
     }
 
     private void initializeViews() {
@@ -77,7 +80,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
     private void setMyTrips() {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
-            databaseService.loadMyTrips(currentUser, new TripsLoadCallback());
+            dataManager.getDatabaseService().loadMyTrips(currentUser, new TripsLoadCallback());
         } else {
             Log.w("HomeActivity", "No user is currently logged in.");
         }
@@ -86,7 +89,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
     private void setGlobalTrips() {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
-            databaseService.loadGlobalTrips(new TripsLoadCallback());
+            dataManager.getDatabaseService().loadGlobalTrips(new TripsLoadCallback());
         } else {
             Log.w("HomeActivity", "No user is currently logged in.");
         }

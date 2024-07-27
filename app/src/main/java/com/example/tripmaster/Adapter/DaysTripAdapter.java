@@ -1,5 +1,6 @@
 package com.example.tripmaster.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.example.tripmaster.R;
 
 import java.util.ArrayList;
 
+@SuppressLint("NotifyDataSetChanged")
 public class DaysTripAdapter extends RecyclerView.Adapter<DaysTripAdapter.ViewHolder> {
 
     private ArrayList<String> eventDates;
