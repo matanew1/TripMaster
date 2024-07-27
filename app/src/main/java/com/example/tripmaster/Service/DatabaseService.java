@@ -101,6 +101,30 @@ public class DatabaseService {
         });
     }
 
+    public void updateGlobalTrip(@NonNull Trip trip) {
+        String tripId = trip.getId(); // Assuming trip has id field
+        // Traverse through all users and update the trip
+        userDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    // Check if user has this trip
+                    if (userSnapshot.child("allTrips").hasChild(tripId)) {
+                        // Update the trip data for each user that has this trip
+                        userSnapshot.getRef().child("allTrips").child(tripId).setValue(trip)
+                                .addOnSuccessListener(aVoid -> Log.d("DatabaseService", "Global trip updated successfully for user: " + userSnapshot.getKey()))
+                                .addOnFailureListener(e -> Log.e("DatabaseService", "Error updating global trip for user: " + userSnapshot.getKey(), e));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("DatabaseService", "Error updating global trip: ", error.toException());
+            }
+        });
+    }
+
 
     public interface DataLoadCallback {
         void onDataLoaded(UserDB userDB);

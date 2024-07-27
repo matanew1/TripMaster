@@ -76,7 +76,7 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
 
             // Save the trip data
             DataManager dataManager = DataManager.getInstance();
-            dataManager.getDatabaseService().saveTrip(currentUser, currentTrip);
+            dataManager.getDatabaseService().updateGlobalTrip(currentTrip);
             Log.d(TAG, "Updated average rating: " + currentTrip.getAverageRating());
 
             // Switch to the HomeActivity
