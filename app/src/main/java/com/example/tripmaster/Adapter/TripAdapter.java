@@ -36,6 +36,12 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         this.tripList = tripList;
     }
 
+    public void updateTrips(ArrayList<Trip> filteredTrips) {
+        tripList.clear();
+        tripList.addAll(filteredTrips);
+        notifyDataSetChanged();
+    }
+
     public static class TripViewHolder extends RecyclerView.ViewHolder {
         public ImageView tripImage;
         public TextView tripTitle;
