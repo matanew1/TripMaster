@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +26,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
     private FirebaseAuth firebaseAuth;
     private TripAdapter tripAdapter;
     private DatabaseService databaseService;
+    private Button globalTripsBtn, myTripsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         setContentView(R.layout.activity_home_screen);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        databaseService = new DatabaseService(); // Initialize DatabaseService
+        databaseService = new DatabaseService();
 
         initializeViews();
         setupRecyclerView();
@@ -43,14 +43,28 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
             loadMenuFragment();
         }
 
-        // Load trips from DatabaseService
-        loadTrips();
+        myTripsBtn.setOnClickListener(v -> {
+            setMyTrips();
+            setButtonState(myTripsBtn, globalTripsBtn);
+        });
+        globalTripsBtn.setOnClickListener(v -> {
+            setGlobalTrips();
+            setButtonState(globalTripsBtn, myTripsBtn);
+        });
+        setGlobalTrips();
+        setButtonState(globalTripsBtn, myTripsBtn);
+    }
+
+    private void setButtonState(Button selectedButton, Button otherButton) {
+        selectedButton.setBackgroundColor(getResources().getColor(R.color.button_default));
+        otherButton.setBackgroundColor(getResources().getColor(R.color.white));
     }
 
     private void initializeViews() {
         recyclerView = findViewById(R.id.trips_list);
-        Button logoutButton = findViewById(R.id.logout_button);
-        logoutButton.setOnClickListener(btn -> logout());
+        findViewById(R.id.logout_button).setOnClickListener(v -> logout());
+        globalTripsBtn = findViewById(R.id.global_trips);
+        myTripsBtn = findViewById(R.id.my_trips);
     }
 
     private void setupRecyclerView() {
@@ -60,26 +74,20 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         recyclerView.setAdapter(tripAdapter);
     }
 
-    private void loadTrips() {
+    private void setMyTrips() {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
-            databaseService.loadTrips(currentUser, new DatabaseService.TripsLoadCallback() {
-                @Override
-                public void onTripsLoaded(ArrayList<Trip> trips) {
-                    // Update tripList and notify the adapter
-                    tripList.clear();
-                    tripList.addAll(trips);
-                    tripAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onTripsLoadFailed(String error) {
-                    // Handle the error, e.g., show a toast or log it
-                    Log.e("HomeActivity", "Error loading trips: " + error);
-                }
-            });
+            databaseService.loadMyTrips(currentUser, new TripsLoadCallback());
         } else {
-            // Handle case when user is not logged in
+            Log.w("HomeActivity", "No user is currently logged in.");
+        }
+    }
+
+    private void setGlobalTrips() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            databaseService.loadGlobalTrips(new TripsLoadCallback());
+        } else {
             Log.w("HomeActivity", "No user is currently logged in.");
         }
     }
@@ -105,5 +113,19 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private class TripsLoadCallback implements DatabaseService.TripsLoadCallback {
+        @Override
+        public void onTripsLoaded(ArrayList<Trip> trips) {
+            tripList.clear();
+            tripList.addAll(trips);
+            tripAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onTripsLoadFailed(String error) {
+            Log.e("HomeActivity", "Error loading trips: " + error);
+        }
     }
 }

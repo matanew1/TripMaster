@@ -22,7 +22,7 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/my_trips"
+        android:text="@string/explore_trips"
         android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
@@ -62,21 +62,21 @@
         android:layout_marginTop="16dp">
 
         <Button
-            android:id="@+id/upcoming_button"
+            android:id="@+id/global_trips"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/upcoming"
-            android:backgroundTint="#FFEB3B"
+            android:text="@string/global"
+            android:backgroundTint="#f3f3f3"
             android:textColor="@android:color/black" />
 
         <Button
-            android:id="@+id/recent_button"
+            android:id="@+id/my_trips"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/recent"
-            android:backgroundTint="#FFEB3B"
+            android:text="@string/my_trips"
+            android:backgroundTint="#f3f3f3"
             android:textColor="@android:color/black"/>
     </LinearLayout>
 

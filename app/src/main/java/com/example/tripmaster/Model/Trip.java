@@ -1,5 +1,9 @@
 package com.example.tripmaster.Model;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.Intent;
+
 import androidx.annotation.NonNull;
 
 import java.io.Serializable;

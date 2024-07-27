@@ -1,9 +1,12 @@
 package com.example.tripmaster.Activity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log; // Import logging
+import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,9 +18,8 @@ import com.example.tripmaster.Adapter.EventTripViewAdapter;
 import com.example.tripmaster.Model.EventTrip;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
+
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class TripViewActivity extends AppCompatActivity implements IScreenSwitch, DaysTripAdapter.OnDateClickListener {
 
@@ -27,6 +29,7 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
     private RecyclerView recyclerViewEvents;
     private Trip currentTrip;
     private Button backButton;
+    private ImageView shareButton;
     private DaysTripAdapter daysTripAdapter;
     private EventTripViewAdapter eventTripViewAdapter;
 
@@ -39,7 +42,6 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         if (getIntent() != null && getIntent().hasExtra("clicked_trip")) {
             currentTrip = (Trip) getIntent().getSerializableExtra("clicked_trip");
         } else {
-            // Handle the case where currentTrip is null
             currentTrip = new Trip(); // Or show an error
         }
 
@@ -49,6 +51,9 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
 
         backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> switchScreen());
+
+        shareButton = findViewById(R.id.icShare);
+        shareButton.setOnClickListener(v -> shareTripDetails());
 
         recyclerViewDays = findViewById(R.id.recyclerViewDays);
         recyclerViewEvents = findViewById(R.id.recyclerViewEvents);
@@ -63,6 +68,43 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         recyclerViewEvents.setLayoutManager(new LinearLayoutManager(this));
         eventTripViewAdapter = new EventTripViewAdapter(new ArrayList<>());
         recyclerViewEvents.setAdapter(eventTripViewAdapter);
+
+        // Load events for the default selected date
+        if (!eventDates.isEmpty()) {
+            String defaultDate = eventDates.get(0);
+            ArrayList<EventTrip> events = new ArrayList<>(currentTrip.getEventTrips().getOrDefault(defaultDate, new ArrayList<>()));
+            eventTripViewAdapter.updateEvents(events);
+        }
+    }
+
+    private boolean isWhatsAppInstalled() {
+        PackageManager pm = getPackageManager();
+        try {
+            pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    private void shareTripDetails() {
+        String tripDetails = "Check out my trip: \n" + currentTrip.toString();
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My Trip Details");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, tripDetails);
+
+        // Check if WhatsApp is installed
+        if (isWhatsAppInstalled()) {
+            shareIntent.setPackage("com.whatsapp");
+            startActivity(shareIntent);
+        } else {
+            // Show a toast message
+            Toast.makeText(this, "WhatsApp is not installed. Using general sharing.", Toast.LENGTH_SHORT).show();
+            // Fallback to general sharing if WhatsApp is not installed
+            startActivity(Intent.createChooser(shareIntent, "Share Trip Details"));
+        }
     }
 
     @Override
