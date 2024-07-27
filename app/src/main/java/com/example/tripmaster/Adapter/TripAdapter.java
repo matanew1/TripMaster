@@ -47,6 +47,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         public TextView tripTitle;
         public TextView tripLocation;
         public TextView tripDate;
+        public TextView tripAverageRating;
 
         public TripViewHolder(View view) {
             super(view);
@@ -54,6 +55,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
             tripTitle = view.findViewById(R.id.trip_title);
             tripLocation = view.findViewById(R.id.trip_location);
             tripDate = view.findViewById(R.id.trip_date);
+            tripAverageRating = view.findViewById(R.id.trip_rating_avg);
         }
     }
 
@@ -100,6 +102,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         holder.tripTitle.setText(trip.getTitle());
         holder.tripLocation.setText(trip.getLocation());
         holder.tripDate.setText(trip.getStartDate());
+        holder.tripAverageRating.setText("Average rating: "+trip.getAverageRating());
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TripViewActivity.class);
             intent.putExtra("clicked_trip", trip);

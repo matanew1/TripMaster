@@ -42,4 +42,9 @@
     <string name="loading">Loading...</string>
     <string name="explore_trips">Explore Trips</string>
     <string name="global">Global</string>
+    <string name="average_rating">0.0</string>
+    <string name="icon_rating">icon_rating</string>
+    <string name="your_rating">Your rating</string>
+    <string name="add_rating">add rating</string>
+    <string name="average_rating_0">Average rating: 0</string>
 </resources>

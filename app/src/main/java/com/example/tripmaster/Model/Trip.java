@@ -21,6 +21,8 @@ public class Trip implements Serializable {
     private HashMap<String, ArrayList<EventTrip>> eventTrips;
     private String startDate;
     private boolean shared;
+    private ArrayList<Float> ratingList;
+    private float averageRating;
 
     public Trip(String fileImgName, String title, String location, String startDate, boolean shared) {
         this.id = UUID.randomUUID().toString();
@@ -30,6 +32,8 @@ public class Trip implements Serializable {
         this.eventTrips = new HashMap<>();
         this.startDate = startDate;
         this.shared = shared;
+        this.ratingList = new ArrayList<>();
+        this.averageRating = 0;
     }
 
     public Trip() {
@@ -40,6 +44,24 @@ public class Trip implements Serializable {
         this.eventTrips = new HashMap<>();
         this.startDate = "";
         this.shared = false;
+        this.ratingList = new ArrayList<>();
+        this.averageRating = 0;
+    }
+
+    public float getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(float averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public ArrayList<Float> getRatingList() {
+        return ratingList;
+    }
+
+    public void setRatingList(ArrayList<Float> ratingList) {
+        this.ratingList = ratingList;
     }
 
     public String getStartDate() {
@@ -122,5 +144,14 @@ public class Trip implements Serializable {
                 ", eventTrips=" + eventTrips +
                 ", startDate='" + startDate + '\'' +
                 '}';
+    }
+
+    public void updateCurrentAverageRating(float rating) {
+        this.getRatingList().add(rating);
+        this.averageRating = (float) this.getRatingList()
+                .stream()
+                .mapToDouble(Float::doubleValue)
+                .average()
+                .orElse(0.0);
     }
 }

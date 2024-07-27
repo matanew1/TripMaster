@@ -6,18 +6,25 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripmaster.Activity.Fragments.MenuFragment;
+import com.example.tripmaster.Activity.Fragments.RatingFragment;
 import com.example.tripmaster.Adapter.DaysTripAdapter;
 import com.example.tripmaster.Adapter.EventTripViewAdapter;
+import com.example.tripmaster.Data.DataManager;
 import com.example.tripmaster.Model.EventTrip;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -42,10 +49,39 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
 
         if (savedInstanceState == null) {
             loadMenuFragment();
+            loadRatingFragment();
         }
 
+        RatingBar myRatingSlider = findViewById(R.id.rating_bar);
+        myRatingSlider.setRating(currentTrip.getAverageRating());
+        myRatingSlider.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            if (fromUser) {
+                Log.d(TAG, "New average rating: " + rating);
+                refreshRatingFragment(rating);
+            }
+        });
+
         Button backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener(v -> switchScreen());
+        backButton.setOnClickListener(v -> {
+            // Update the trip's average rating
+            currentTrip.updateCurrentAverageRating(myRatingSlider.getRating());
+
+            // Get the current FirebaseUser
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser == null) {
+                Log.e(TAG, "User not logged in");
+                Toast.makeText(this, "Error: User not logged in", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Save the trip data
+            DataManager dataManager = DataManager.getInstance();
+            dataManager.getDatabaseService().saveTrip(currentUser, currentTrip);
+            Log.d(TAG, "Updated average rating: " + currentTrip.getAverageRating());
+
+            // Switch to the HomeActivity
+            switchScreen();
+        });
 
         RecyclerView recyclerViewDays = findViewById(R.id.recyclerViewDays);
         RecyclerView recyclerViewEvents = findViewById(R.id.recyclerViewEvents);
@@ -69,6 +105,17 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         }
     }
 
+    private void refreshRatingFragment(float rating) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        RatingFragment fragment = (RatingFragment) fragmentManager.findFragmentById(R.id.rating_frag);
+        if (fragment != null) {
+            fragment.updateRating(rating);
+        } else {
+            Log.d(TAG, "RatingFragment is null");
+        }
+    }
+
+
     @Override
     public void onDateClick(String date) {
         Log.d(TAG, "Selected date: " + date); // Log the selected date
@@ -90,6 +137,14 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.menu_container, new MenuFragment())
+                .commit();
+    }
+
+
+    private void loadRatingFragment() {
+        RatingFragment ratingFragment = RatingFragment.newInstance(currentTrip);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.rating_frag, ratingFragment)
                 .commit();
     }
 }
