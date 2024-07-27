@@ -29,102 +29,86 @@ public class DatabaseService {
 
     public void loadUserData(@NonNull FirebaseUser currentUser, final DataLoadCallback callback) {
         String userId = currentUser.getUid();
-        userDatabaseReference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    UserDB userDB = snapshot.getValue(UserDB.class);
-                    if (userDB != null) {
-                        callback.onDataLoaded(userDB);
-                    } else {
-                        callback.onDataLoadFailed("User data is null");
-                    }
-                } else {
-                    callback.onDataLoadFailed("User data does not exist");
-                }
+        fetchData(userDatabaseReference.child(userId), snapshot -> {
+            UserDB userDB = snapshot.getValue(UserDB.class);
+            if (userDB != null) {
+                callback.onDataLoaded(userDB);
+            } else {
+                callback.onDataLoadFailed("User data is null");
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("DatabaseService", "Error loading user data: ", error.toException());
-                callback.onDataLoadFailed(error.getMessage());
-            }
+        }, error -> {
+            Log.e("DatabaseService", "Error loading user data: ", error.toException());
+            callback.onDataLoadFailed(error.getMessage());
         });
     }
 
     public void saveTrip(@NonNull FirebaseUser currentUser, @NonNull Trip trip) {
         String userId = currentUser.getUid();
-        userDatabaseReference.child(userId).child("allTrips").child(trip.getId()).setValue(trip)
-                .addOnSuccessListener(aVoid -> Log.d("DatabaseService", "Trip data saved successfully"))
-                .addOnFailureListener(e -> Log.e("DatabaseService", "Error saving trip data: ", e));
+        updateData(userDatabaseReference.child(userId).child("allTrips").child(trip.getId()), trip,
+                "Trip data saved successfully", "Error saving trip data");
     }
 
     public void loadMyTrips(@NonNull FirebaseUser currentUser, final TripsLoadCallback callback) {
-        userDatabaseReference.child(currentUser.getUid()).child("allTrips").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<Trip> tripsList = StreamSupport.stream(snapshot.getChildren().spliterator(), false)
-                        .map(tripSnapshot -> tripSnapshot.getValue(Trip.class))
-                        .collect(Collectors.toList());
-                callback.onTripsLoaded(new ArrayList<>(tripsList));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("DatabaseService", "Error loading trips: ", error.toException());
-                callback.onTripsLoadFailed(error.getMessage());
-            }
+        fetchData(userDatabaseReference.child(currentUser.getUid()).child("allTrips"), snapshot -> {
+            List<Trip> tripsList = StreamSupport.stream(snapshot.getChildren().spliterator(), false)
+                    .map(tripSnapshot -> tripSnapshot.getValue(Trip.class))
+                    .collect(Collectors.toList());
+            callback.onTripsLoaded(new ArrayList<>(tripsList));
+        }, error -> {
+            Log.e("DatabaseService", "Error loading trips: ", error.toException());
+            callback.onTripsLoadFailed(error.getMessage());
         });
     }
 
     public void loadGlobalTrips(final TripsLoadCallback callback) {
-        userDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Stream through all user snapshots and their trips
-                List<Trip> globalTripsList = StreamSupport.stream(snapshot.getChildren().spliterator(), false)
-                        .flatMap(userSnapshot -> StreamSupport.stream(userSnapshot.child("allTrips").getChildren().spliterator(), false)
-                                .map(tripSnapshot -> tripSnapshot.getValue(Trip.class))
-                                .filter(trip -> trip != null && trip.isShared())
-                        )
-                        .collect(Collectors.toList());
-
-                // Pass the filtered list to the callback
-                callback.onTripsLoaded(new ArrayList<>(globalTripsList));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("DatabaseService", "Error loading trips: ", error.toException());
-                callback.onTripsLoadFailed(error.getMessage());
-            }
+        fetchData(userDatabaseReference, snapshot -> {
+            List<Trip> globalTripsList = StreamSupport.stream(snapshot.getChildren().spliterator(), false)
+                    .flatMap(userSnapshot -> StreamSupport.stream(userSnapshot.child("allTrips").getChildren().spliterator(), false)
+                            .map(tripSnapshot -> tripSnapshot.getValue(Trip.class))
+                            .filter(trip -> trip != null && trip.isShared())
+                    )
+                    .collect(Collectors.toList());
+            callback.onTripsLoaded(new ArrayList<>(globalTripsList));
+        }, error -> {
+            Log.e("DatabaseService", "Error loading trips: ", error.toException());
+            callback.onTripsLoadFailed(error.getMessage());
         });
     }
 
     public void updateGlobalTrip(@NonNull Trip trip) {
-        String tripId = trip.getId(); // Assuming trip has id field
-        // Traverse through all users and update the trip
-        userDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        String tripId = trip.getId();
+        fetchData(userDatabaseReference, snapshot -> {
+            for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                if (userSnapshot.child("allTrips").hasChild(tripId)) {
+                    updateData(userSnapshot.getRef().child("allTrips").child(tripId), trip,
+                            "Global trip updated successfully for user: " + userSnapshot.getKey(),
+                            "Error updating global trip for user: " + userSnapshot.getKey());
+                }
+            }
+        }, error -> {
+            Log.e("DatabaseService", "Error updating global trip: ", error.toException());
+        });
+    }
+
+    private void fetchData(@NonNull DatabaseReference reference, DataLoadAction onDataLoaded, ErrorAction onError) {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                    // Check if user has this trip
-                    if (userSnapshot.child("allTrips").hasChild(tripId)) {
-                        // Update the trip data for each user that has this trip
-                        userSnapshot.getRef().child("allTrips").child(tripId).setValue(trip)
-                                .addOnSuccessListener(aVoid -> Log.d("DatabaseService", "Global trip updated successfully for user: " + userSnapshot.getKey()))
-                                .addOnFailureListener(e -> Log.e("DatabaseService", "Error updating global trip for user: " + userSnapshot.getKey(), e));
-                    }
-                }
+                onDataLoaded.onData(snapshot);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("DatabaseService", "Error updating global trip: ", error.toException());
+                onError.onError(error);
             }
         });
     }
 
+    private void updateData(@NonNull DatabaseReference reference, Object data, String successMessage, String errorMessage) {
+        reference.setValue(data)
+                .addOnSuccessListener(aVoid -> Log.d("DatabaseService", successMessage))
+                .addOnFailureListener(e -> Log.e("DatabaseService", errorMessage, e));
+    }
 
     public interface DataLoadCallback {
         void onDataLoaded(UserDB userDB);
@@ -134,5 +118,13 @@ public class DatabaseService {
     public interface TripsLoadCallback {
         void onTripsLoaded(ArrayList<Trip> trips);
         void onTripsLoadFailed(String error);
+    }
+
+    private interface DataLoadAction {
+        void onData(DataSnapshot snapshot);
+    }
+
+    private interface ErrorAction {
+        void onError(DatabaseError error);
     }
 }

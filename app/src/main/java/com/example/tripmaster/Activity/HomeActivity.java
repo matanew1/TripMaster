@@ -52,8 +52,8 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         setupButtonListeners();
         setupSearchBarListener();
 
-        setMyTrips(); // Load my trips by default
-        setButtonState(myTripsBtn, globalTripsBtn);
+        setGlobalTrips();
+        setButtonState(globalTripsBtn, myTripsBtn);
     }
 
     private void initializeFirebase() {
