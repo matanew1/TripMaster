@@ -8,6 +8,7 @@ import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.Model.UserDB;
 import com.example.tripmaster.Utils.Consts;
 import com.example.tripmaster.Utils.FireBaseOperations;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -108,6 +110,22 @@ public class DatabaseService {
         reference.setValue(data)
                 .addOnSuccessListener(aVoid -> Log.d("DatabaseService", successMessage))
                 .addOnFailureListener(e -> Log.e("DatabaseService", errorMessage, e));
+    }
+
+    public void updateUser(UserDB updatedUser) {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser == null) {
+            Log.e("DatabaseService", "No authenticated user found");
+            return;
+        }
+
+        String userId = firebaseUser.getUid();
+        DatabaseReference userRef = userDatabaseReference.child(userId);
+
+        // Update user data in the database
+        userRef.child("photoUrl").setValue(updatedUser.getPhotoUrl())
+                .addOnSuccessListener(aVoid -> Log.d("DatabaseService", "User data updated successfully"))
+                .addOnFailureListener(e -> Log.e("DatabaseService", "Error updating user data", e));
     }
 
     public interface DataLoadCallback {

@@ -56,4 +56,7 @@ dependencies {
     //Gson
     implementation(libs.gson)
 
+    //circle
+    implementation(libs.cardview)
+
 }

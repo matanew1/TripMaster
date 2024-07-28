@@ -60,7 +60,7 @@ public class AuthService {
         }
     }
 
-    private void checkAlreadyExists(FirebaseUser currentUser) {
+    private void checkAlreadyExists(@NonNull FirebaseUser currentUser) {
         reference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -79,13 +79,14 @@ public class AuthService {
         });
     }
 
-    private void createNewUserDB(FirebaseUser currentUser) {
+    private void createNewUserDB(@NonNull FirebaseUser currentUser) {
         UserDB userDB = UserDB.getInstance();
         userDB.setName(currentUser.getDisplayName());
+        userDB.setEmail(currentUser.getEmail()); // Set email field
         reference.child(currentUser.getUid()).setValue(userDB);
     }
 
-    private void loadUserFromDB(FirebaseUser currentUser) {
+    private void loadUserFromDB(@NonNull FirebaseUser currentUser) {
         reference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -104,6 +105,8 @@ public class AuthService {
                         }
                         userDB.setAllTrips(tripsMap);
                     }
+                    userDB.setEmail(currentUser.getEmail());
+                    userDB.setPhotoUrl(String.valueOf(currentUser.getPhotoUrl()));
                     UserDB.getInstance().setUser(userDB);
                 }
             }

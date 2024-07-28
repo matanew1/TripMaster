@@ -52,6 +52,11 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
         </activity>
+        <activity
+            android:name=".Activity.ProfileActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
         <!-- Splash Activity -->
         <activity
             android:name=".Activity.SplashActivity"

@@ -132,7 +132,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
     }
 
     private void uploadFile(Uri fileUri) {
-        fileStorageService.uploadFile(fileUri, new FileStorageService.FileUploadCallback() {
+        fileStorageService.uploadFileImage(fileUri, new FileStorageService.FileUploadCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(AddTripActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT).show();

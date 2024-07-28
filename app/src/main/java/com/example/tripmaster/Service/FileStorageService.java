@@ -2,6 +2,8 @@ package com.example.tripmaster.Service;
 
 import android.net.Uri;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -14,13 +16,19 @@ public class FileStorageService {
         storageRef = storage.getReference();
     }
 
-    public void uploadFile(Uri fileUri, final FileUploadCallback callback) {
+    public void uploadFileImage(Uri fileUri, final FileUploadCallback callback) {
         if (fileUri == null) {
             if (callback != null) callback.onFailure(new IllegalArgumentException("File URI is null"));
             return;
         }
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            if (callback != null) callback.onFailure(new IllegalStateException("User not authenticated"));
+            return;
+        }
 
-        StorageReference fileRef = storageRef.child("uploads/" + fileUri.getLastPathSegment());
+        String userId = currentUser.getUid();
+        StorageReference fileRef = storageRef.child("uploads/" + userId + "/" + fileUri.getLastPathSegment());
 
         fileRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {

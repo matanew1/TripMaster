@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.example.tripmaster.Activity.AddTripActivity;
 import com.example.tripmaster.Activity.HomeActivity;
 import com.example.tripmaster.Activity.IScreenSwitch;
+import com.example.tripmaster.Activity.ProfileActivity;
 import com.example.tripmaster.R;
 
 public class MenuFragment extends Fragment implements IScreenSwitch {
@@ -40,7 +41,7 @@ public class MenuFragment extends Fragment implements IScreenSwitch {
         });
         view.findViewById(R.id.profile_icon).setOnClickListener(v -> {
             // Handle profile click
-//            target = ProfileActivity.class; // Replace with actual target class
+            target = ProfileActivity.class; // Replace with actual target class
             switchScreen();
         });
     }

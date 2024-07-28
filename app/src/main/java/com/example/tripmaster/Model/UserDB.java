@@ -1,26 +1,33 @@
 package com.example.tripmaster.Model;
 
+import android.net.Uri;
+
+import androidx.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class UserDB implements Serializable {
 
-    private Map<String, Trip> allTrips;  // Change to Map for Firebase deserialization
+    private Map<String, Trip> allTrips;
     private String name;
+    private String email;
+    private String photoUrl; // Add photo URL field
     private static UserDB userDB = null;
 
     private UserDB() {
-        allTrips = new HashMap<>();  // Initialize as HashMap
+        allTrips = new HashMap<>();
     }
 
-    private UserDB(FirebaseUser currentUser) {
-        allTrips = new HashMap<>();  // Initialize as HashMap
+    private UserDB(@NonNull FirebaseUser currentUser) {
+        allTrips = new HashMap<>();
         this.name = currentUser.getDisplayName();
+        this.email = currentUser.getEmail();
+        this.photoUrl = String.valueOf(currentUser.getPhotoUrl()); // Initialize photo URL field
     }
 
     public static void init(FirebaseUser currentUser) {
@@ -36,13 +43,19 @@ public class UserDB implements Serializable {
         return userDB;
     }
 
+    public static UserDB getCurrentUser() {
+        return getInstance();
+    }
+
     public void setUser(UserDB user) {
         this.name = user.name;
+        this.email = user.email;
+        this.photoUrl = user.photoUrl; // Set photo URL field
         this.allTrips = user.allTrips;
     }
 
     public ArrayList<Trip> getAllTrips() {
-        return new ArrayList<>(allTrips.values());  // Convert Map to List
+        return new ArrayList<>(allTrips.values());
     }
 
     public void setAllTrips(Map<String, Trip> allTrips) {
@@ -57,7 +70,22 @@ public class UserDB implements Serializable {
         return name;
     }
 
-    public void addTrip(Trip trip) {
-        allTrips.put(trip.getId(), trip);  // Ensure Trip has a unique ID
+    public void setEmail(String email) {
+        this.email = email;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+
 }

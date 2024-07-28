@@ -47,4 +47,11 @@
     <string name="your_rating">Your rating</string>
     <string name="add_rating">add rating</string>
     <string name="average_rating_0">Average rating: 0</string>
+    <string name="circle">circle</string>
+    <string name="full_name">Full Name</string>
+    <string name="admin_gmail_com">admin@gmail.com</string>
+    <string name="email">email</string>
+    <string name="my_address">My address</string>
+    <string name="phone_num">+972123456789</string>
+    <string name="bgprofile">bgprofile</string>
 </resources>
