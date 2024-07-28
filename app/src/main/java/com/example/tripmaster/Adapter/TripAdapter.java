@@ -89,6 +89,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         // Download the file
         fileRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
             // File downloaded successfully
+            // TODO: verify why the Trip or load the image doesn't contain the image loaded
             Uri localFileUri = Uri.fromFile(localFile);
             Glide.with(holder.itemView.getContext())
                     .load(localFileUri)
