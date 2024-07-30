@@ -2,19 +2,27 @@ package com.example.tripmaster.Activity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.tripmaster.Activity.Fragments.MenuFragment;
 import com.example.tripmaster.Activity.Fragments.RatingFragment;
 import com.example.tripmaster.Adapter.DaysTripAdapter;
@@ -23,10 +31,12 @@ import com.example.tripmaster.Data.DataManager;
 import com.example.tripmaster.Model.EventTrip;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
+import com.example.tripmaster.Service.FileStorageService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class TripViewActivity extends AppCompatActivity implements IScreenSwitch, DaysTripAdapter.OnDateClickListener {
 
@@ -52,6 +62,12 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
             loadRatingFragment();
         }
 
+        // Load photo URL from current user and set background
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            loadUserProfileBackground(currentUser);
+        }
+
         RatingBar myRatingSlider = findViewById(R.id.rating_bar);
         myRatingSlider.setRating(currentTrip.getAverageRating());
         myRatingSlider.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
@@ -67,7 +83,6 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
             currentTrip.updateCurrentAverageRating(myRatingSlider.getRating());
 
             // Get the current FirebaseUser
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser == null) {
                 Log.e(TAG, "User not logged in");
                 Toast.makeText(this, "Error: User not logged in", Toast.LENGTH_SHORT).show();
@@ -103,6 +118,37 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
             ArrayList<EventTrip> events = new ArrayList<>(currentTrip.getEventTrips().getOrDefault(defaultDate, new ArrayList<>()));
             eventTripViewAdapter.updateEvents(events);
         }
+    }
+
+    private void loadUserProfileBackground(FirebaseUser currentUser) {
+        FileStorageService fileStorageService = new FileStorageService();
+        String filePath = "uploads/" + currentUser.getUid() + "/" + currentUser.getPhotoUrl(); // Adjust the path as necessary
+
+        fileStorageService.downloadFileImage(filePath, new FileStorageService.FileDownloadCallback() {
+            @Override
+            public void onSuccess(Uri fileUri) {
+                LinearLayout linearLayout = findViewById(R.id.bg_trip);
+                Glide.with(TripViewActivity.this)
+                        .load(fileUri)
+                        .into(new CustomTarget<Drawable>() {
+                            @Override
+                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                linearLayout.setBackground(resource);
+                            }
+
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                                // Handle if necessary
+                            }
+                        });
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e(TAG, "Failed to load profile background image: " + e.getMessage());
+                Toast.makeText(TripViewActivity.this, "Failed to load profile background image", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void refreshRatingFragment(float rating) {
