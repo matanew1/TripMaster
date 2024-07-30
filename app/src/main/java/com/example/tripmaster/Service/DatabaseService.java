@@ -1,5 +1,6 @@
 package com.example.tripmaster.Service;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import com.example.tripmaster.Utils.Consts;
 import com.example.tripmaster.Utils.FireBaseOperations;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -126,6 +128,20 @@ public class DatabaseService {
         userRef.child("photoUrl").setValue(updatedUser.getPhotoUrl())
                 .addOnSuccessListener(aVoid -> Log.d("DatabaseService", "User data updated successfully"))
                 .addOnFailureListener(e -> Log.e("DatabaseService", "Error updating user data", e));
+
+        // Update user profile picture in FirebaseAuth
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(Uri.parse(updatedUser.getPhotoUrl()))
+                .build();
+
+        firebaseUser.updateProfile(profileUpdates)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("DatabaseService", "User profile updated.");
+                    } else {
+                        Log.e("DatabaseService", "Error updating user profile", task.getException());
+                    }
+                });
     }
 
     public interface DataLoadCallback {

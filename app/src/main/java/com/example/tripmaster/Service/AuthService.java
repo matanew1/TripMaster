@@ -57,6 +57,7 @@ public class AuthService {
         } else {
             UserDB.init(currentUser);
             checkAlreadyExists(currentUser);
+            System.out.println("INITTTT: "+currentUser.getPhotoUrl());
         }
     }
 

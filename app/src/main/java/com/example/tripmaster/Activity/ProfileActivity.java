@@ -15,6 +15,9 @@ import com.example.tripmaster.Data.DataManager;
 import com.example.tripmaster.Model.UserDB;
 import com.example.tripmaster.R;
 import com.example.tripmaster.Service.FileStorageService;
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity implements IScreenSwitch {
 
@@ -84,19 +87,37 @@ public class ProfileActivity extends AppCompatActivity implements IScreenSwitch 
         email = findViewById(R.id.email_user);
         currentUser = UserDB.getCurrentUser();
 
-        // TODO: verify why the UserDB doesn't contain the image loaded
+        System.out.println("AAAAAAAAAAAAAAAA: "+currentUser.toString());
         if (currentUser != null) {
             fullName.setText(currentUser.getName());
-            email.setText(currentUser.getEmail()); // Set email field
+            email.setText(currentUser.getEmail());
 
             String profileImageUrl = currentUser.getPhotoUrl();
             if (profileImageUrl != null) {
-                Glide.with(this)
-                        .load(profileImageUrl)
-                        .into(profileImage);
+                String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+                String filePath = "uploads/" + userId + "/" + profileImageUrl;
+                loadProfileImage(filePath);
             }
         }
     }
+
+    private void loadProfileImage(String filePath) {
+        System.out.println("FFFFFFFFFFFFFFFFFFFFFFFF:: "+filePath);
+        fileStorageService.downloadFileImage(filePath, new FileStorageService.FileDownloadCallback() {
+            @Override
+            public void onSuccess(Uri fileUri) {
+                Glide.with(ProfileActivity.this)
+                        .load(fileUri)
+                        .into(profileImage);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(ProfileActivity.this, "Failed to load profile image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     @Override
     public void switchScreen() {

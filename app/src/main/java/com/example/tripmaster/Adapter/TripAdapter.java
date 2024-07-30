@@ -15,11 +15,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.tripmaster.Activity.TripViewActivity;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.example.tripmaster.Service.FileStorageService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +32,12 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
 
     private final ArrayList<Trip> tripList;
     private final Context context;
+    private final FileStorageService fileStorageService;
 
     public TripAdapter(Context context, ArrayList<Trip> tripList) {
         this.context = context;
         this.tripList = tripList;
+        this.fileStorageService = new FileStorageService();
     }
 
     public void updateTrips(ArrayList<Trip> filteredTrips) {
@@ -70,40 +74,31 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         Trip trip = tripList.get(position);
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert firebaseUser != null;
 
-        // Get the Firebase Storage reference
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        StorageReference fileRef = storageRef.child("uploads/" + trip.getFileImgName());
+        String filePath = "uploads/" + firebaseUser.getUid() + "/" + trip.getFileImgName();
+        fileStorageService.downloadFileImage(filePath, new FileStorageService.FileDownloadCallback() {
+            @Override
+            public void onSuccess(Uri fileUri) {
+                Glide.with(context)
+                        .load(fileUri)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .into(holder.tripImage);
+            }
 
-        // Create a local file in the cache directory
-        File localFile;
-        try {
-            localFile = File.createTempFile("images", ".jpeg", context.getCacheDir());
-        } catch (IOException e) {
-            Log.e("TripAdapter", "Error creating local file", e);
-            holder.tripImage.setImageResource(R.drawable.def_img); // Set a placeholder image
-            return;
-        }
-
-        // Download the file
-        fileRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
-            // File downloaded successfully
-            // TODO: verify why the Trip or load the image doesn't contain the image loaded
-            Uri localFileUri = Uri.fromFile(localFile);
-            Glide.with(holder.itemView.getContext())
-                    .load(localFileUri)
-                    .into(holder.tripImage);
-        }).addOnFailureListener(exception -> {
-            // Download failed
-            Log.e("TripAdapter", "Image download failed: ", exception);
-            holder.tripImage.setImageResource(R.drawable.def_img); // Set a placeholder image
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("TripAdapter", "Image download failed: ", e);
+                holder.tripImage.setImageResource(R.drawable.def_img); // Set a placeholder image
+            }
         });
 
         holder.tripTitle.setText(trip.getTitle());
         holder.tripLocation.setText(trip.getLocation());
         holder.tripDate.setText(trip.getStartDate());
-        holder.tripAverageRating.setText("Average rating: "+trip.getAverageRating());
+        holder.tripAverageRating.setText("Average rating: " + trip.getAverageRating());
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TripViewActivity.class);
             intent.putExtra("clicked_trip", trip);

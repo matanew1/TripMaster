@@ -30,6 +30,17 @@ public class UserDB implements Serializable {
         this.photoUrl = String.valueOf(currentUser.getPhotoUrl()); // Initialize photo URL field
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "UserDB{" +
+                "allTrips=" + allTrips +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
+                '}';
+    }
+
     public static void init(FirebaseUser currentUser) {
         if (userDB == null) {
             userDB = new UserDB(currentUser);
