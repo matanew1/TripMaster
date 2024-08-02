@@ -41,7 +41,6 @@ public class AuthService {
         if (currentUser == null) {
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.EmailBuilder().build(),
-                    new AuthUI.IdpConfig.GoogleBuilder().build(),
                     new AuthUI.IdpConfig.AnonymousBuilder().build()
             );
 
