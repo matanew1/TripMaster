@@ -34,10 +34,6 @@ Trip Master is a user-friendly application designed to help you manage your trav
 3. Start adding trips by filling out the necessary details.
 4. Share your trips and manage files as needed.
 
-## Mock Data
-
-To quickly test the app, mock data is included. You can find the mock data setup in the `MainActivity.java` file.
-
 ## Contributing
 
 Contributions are welcome! If you have suggestions for improvements or want to add new features, feel free to fork the repository and submit a pull request.
