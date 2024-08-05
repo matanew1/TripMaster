@@ -1,5 +1,7 @@
 package com.example.tripmaster.Service;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Intent;
 import android.util.Log;
 
@@ -13,8 +15,11 @@ import com.example.tripmaster.R;
 import com.example.tripmaster.Utils.Consts;
 import com.example.tripmaster.Utils.FireBaseOperations;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class AuthService {
     private final DatabaseReference reference;
@@ -39,6 +45,7 @@ public class AuthService {
     public void login() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
+            // No user is signed in, start the sign-in process
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.EmailBuilder().build(),
                     new AuthUI.IdpConfig.AnonymousBuilder().build()
@@ -54,16 +61,34 @@ public class AuthService {
 
             signInLauncher.launch(signInIntent);
         } else {
+            // User is already signed in, check if the user exists in the database
             UserDB.init(currentUser);
             checkAlreadyExists(currentUser);
-            System.out.println("INITTTT: "+currentUser.getPhotoUrl());
         }
     }
 
-    private void checkAlreadyExists(@NonNull FirebaseUser currentUser) {
+    private void onSignInResult(@NonNull FirebaseAuthUIAuthenticationResult result) {
+        if (result.getResultCode() == RESULT_OK) {
+            // Successfully signed in
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                UserDB.init(user);
+                checkAlreadyExists(user);
+            }
+        } else {
+            // Sign-in failed, handle the error
+            Exception e = Objects.requireNonNull(result.getIdpResponse()).getError();
+            assert e != null;
+            Log.e("AuthError", "Sign-in failed: " + e.getMessage());
+            // Handle other possible errors here
+        }
+    }
+
+    public void checkAlreadyExists(@NonNull FirebaseUser currentUser) {
         reference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("Firebase", "User data exists: " + dataSnapshot.exists());
                 if (dataSnapshot.exists()) {
                     loadUserFromDB(currentUser);
                 } else {
@@ -81,8 +106,8 @@ public class AuthService {
 
     private void createNewUserDB(@NonNull FirebaseUser currentUser) {
         UserDB userDB = UserDB.getInstance();
-        userDB.setName(currentUser.getDisplayName());
-        userDB.setEmail(currentUser.getEmail()); // Set email field
+        userDB.setName(currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "No Name");
+        userDB.setEmail(currentUser.getEmail() != null ? currentUser.getEmail() : "No Email");
         reference.child(currentUser.getUid()).setValue(userDB);
     }
 

@@ -87,7 +87,6 @@ public class ProfileActivity extends AppCompatActivity implements IScreenSwitch 
         email = findViewById(R.id.email_user);
         currentUser = UserDB.getCurrentUser();
 
-        System.out.println("AAAAAAAAAAAAAAAA: "+currentUser.toString());
         if (currentUser != null) {
             fullName.setText(currentUser.getName());
             email.setText(currentUser.getEmail());
@@ -102,7 +101,6 @@ public class ProfileActivity extends AppCompatActivity implements IScreenSwitch 
     }
 
     private void loadProfileImage(String filePath) {
-        System.out.println("FFFFFFFFFFFFFFFFFFFFFFFF:: "+filePath);
         fileStorageService.downloadFileImage(filePath, new FileStorageService.FileDownloadCallback() {
             @Override
             public void onSuccess(Uri fileUri) {
