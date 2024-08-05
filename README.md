@@ -25,7 +25,7 @@ Trip Master is a user-friendly application designed to help you manage your trav
    git clone https://github.com/matanew1/TripMaster.git
 2. Open the project in Android Studio.
 3. Sync the project with Gradle files.
-3. Build and run the app on an emulator or physical device.
+4. Build and run the app on an emulator or physical device.
 
 ## Usage
 
