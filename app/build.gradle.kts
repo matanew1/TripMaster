@@ -29,6 +29,7 @@ android {
     }
 }
 
+
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -58,5 +59,9 @@ dependencies {
 
     //circle
     implementation(libs.cardview)
+
+
+    // Lottie
+    implementation(libs.lottie)
 
 }

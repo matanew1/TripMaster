@@ -214,7 +214,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
 
     @Override
     public void switchScreen() {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, NewTripSplashActivity.class);
         startActivity(intent);
         finish();
     }

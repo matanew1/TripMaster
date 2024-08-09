@@ -59,7 +59,12 @@
         </activity>
         <!-- Splash Activity -->
         <activity
-            android:name=".Activity.SplashActivity"
+            android:name=".Activity.NewTripSplashActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+        <activity
+            android:name=".Activity.LoadingSplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
