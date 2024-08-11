@@ -137,7 +137,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
             public void onSuccess() {
                 Toast.makeText(AddTripActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
                 currentTrip.setFileImgName(fileUri.getLastPathSegment());
-                uploadBtn.setText(fileUri.getLastPathSegment());
+                uploadBtn.setText("File Uploaded !");
             }
 
             @Override
