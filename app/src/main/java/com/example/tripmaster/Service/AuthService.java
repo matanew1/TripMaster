@@ -1,8 +1,6 @@
 package com.example.tripmaster.Service;
 
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -27,7 +25,7 @@ public class AuthService {
     private FirebaseAuth mAuth;
 
 
-    public FirebaseAuth getmAuth() {return mAuth;}
+    public FirebaseAuth getAuth() {return mAuth;}
     public AuthService() {
         mAuth = FirebaseAuth.getInstance();
         reference = FireBaseOperations.getInstance().getDatabaseReference(Consts.USER_DB);
@@ -102,7 +100,9 @@ public class AuthService {
         reference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                UserDB userDB = snapshot.getValue(UserDB.class);
+
+                UserDB.init(currentUser);
+                UserDB userDB = UserDB.getInstance();
                 if (userDB != null) {
                     // Check if 'allTrips' is a Map or List
                     Object tripsObject = snapshot.child("allTrips").getValue();
@@ -119,10 +119,9 @@ public class AuthService {
                     }
                     userDB.setEmail(currentUser.getEmail());
                     userDB.setPhotoUrl(String.valueOf(currentUser.getPhotoUrl()));
-                    UserDB.getInstance().setUser(userDB);
                     listener.onSuccess();
                 } else {
-                    listener.onFailure("Error loading user data");
+                    listener.onFailure("UserDB instance is null");
                 }
             }
 

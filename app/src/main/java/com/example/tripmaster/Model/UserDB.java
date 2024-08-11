@@ -13,6 +13,8 @@ import java.util.Map;
 
 public class UserDB implements Serializable {
 
+    private static final long serialVersionUID = 1L; // Add serialVersionUID
+
     private Map<String, Trip> allTrips;
     private String name;
     private String email;
@@ -89,7 +91,6 @@ public class UserDB implements Serializable {
         return email;
     }
 
-
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
     }
@@ -97,6 +98,4 @@ public class UserDB implements Serializable {
     public String getPhotoUrl() {
         return photoUrl;
     }
-
-
 }

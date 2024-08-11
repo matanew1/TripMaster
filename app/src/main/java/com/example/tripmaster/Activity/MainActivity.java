@@ -51,10 +51,10 @@ public class MainActivity extends AppCompatActivity implements IScreenSwitch {
     }
 
     private void init() {
-        if (authService.getmAuth().getCurrentUser() == null) {
+        if (authService.getAuth().getCurrentUser() == null) {
             showSignInUI();
         } else {
-            authService.checkUserExistence(authService.getmAuth().getCurrentUser(), new AuthService.OnAuthCompleteListener() {
+            authService.checkUserExistence(authService.getAuth().getCurrentUser(), new AuthService.OnAuthCompleteListener() {
                 @Override
                 public void onSuccess() {
                     switchScreen();
