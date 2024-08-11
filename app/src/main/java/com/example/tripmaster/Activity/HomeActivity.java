@@ -149,12 +149,8 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
     }
 
     private void logout() {
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener(task -> {
-                    firebaseAuth.signOut();
-                    switchScreen();
-                });
+        firebaseAuth.signOut();
+        switchScreen();
     }
 
     private void loadMenuFragment() {
