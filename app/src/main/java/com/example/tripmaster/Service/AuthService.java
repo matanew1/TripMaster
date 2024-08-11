@@ -1,117 +1,104 @@
 package com.example.tripmaster.Service;
 
-import static android.app.Activity.RESULT_OK;
-
-import android.content.Intent;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 
-import com.example.tripmaster.Activity.IScreenSwitch;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.Model.UserDB;
-import com.example.tripmaster.R;
 import com.example.tripmaster.Utils.Consts;
 import com.example.tripmaster.Utils.FireBaseOperations;
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class AuthService {
-    private final DatabaseReference reference;
-    private final ActivityResultLauncher<Intent> signInLauncher;
-    private final IScreenSwitch screenSwitchListener;
+    private DatabaseReference reference;
+    private FirebaseAuth mAuth;
 
-    public AuthService(ActivityResultLauncher<Intent> signInLauncher, IScreenSwitch listener) {
-        this.reference = FireBaseOperations.getInstance().getDatabaseReference(Consts.USER_DB);
-        this.signInLauncher = signInLauncher;
-        this.screenSwitchListener = listener;
+
+    public FirebaseAuth getmAuth() {return mAuth;}
+    public AuthService() {
+        mAuth = FirebaseAuth.getInstance();
+        reference = FireBaseOperations.getInstance().getDatabaseReference(Consts.USER_DB);
     }
 
-    public void login() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            // No user is signed in, start the sign-in process
-            List<AuthUI.IdpConfig> providers = Arrays.asList(
-                    new AuthUI.IdpConfig.EmailBuilder().build(),
-                    new AuthUI.IdpConfig.AnonymousBuilder().build()
-            );
-
-            Intent signInIntent = AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setAvailableProviders(providers)
-                    .setTheme(R.style.firebaseTheme)
-                    .setLogo(R.drawable.logo)
-                    .setIsSmartLockEnabled(false)
-                    .build();
-
-            signInLauncher.launch(signInIntent);
-        } else {
-            // User is already signed in, check if the user exists in the database
-            UserDB.init(currentUser);
-            checkAlreadyExists(currentUser);
-        }
+    public void signInUser(String email, String password, OnAuthCompleteListener listener) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            UserDB.init(user);
+                            checkUserExistence(user, listener);
+                        }
+                    } else {
+                        Log.w("Auth", "Sign-in failed", task.getException());
+                        listener.onFailure("Sign-in failed: " + Objects.requireNonNull(task.getException()).getMessage());
+                    }
+                });
     }
 
-    private void onSignInResult(@NonNull FirebaseAuthUIAuthenticationResult result) {
-        if (result.getResultCode() == RESULT_OK) {
-            // Successfully signed in
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                UserDB.init(user);
-                checkAlreadyExists(user);
-            }
-        } else {
-            // Sign-in failed, handle the error
-            Exception e = Objects.requireNonNull(result.getIdpResponse()).getError();
-            assert e != null;
-            Log.e("AuthError", "Sign-in failed: " + e.getMessage());
-            // Handle other possible errors here
-        }
+    public void registerUser(String email, String password, OnAuthCompleteListener listener) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            UserDB.init(user);
+                            createNewUserDB(user, listener);
+                        }
+                    } else {
+                        Log.w("Auth", "Registration failed", task.getException());
+                        listener.onFailure("Registration failed: " + Objects.requireNonNull(task.getException()).getMessage());
+                    }
+                });
     }
 
-    public void checkAlreadyExists(@NonNull FirebaseUser currentUser) {
+    public void checkUserExistence(@NonNull FirebaseUser currentUser, OnAuthCompleteListener listener) {
         reference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("Firebase", "User data exists: " + dataSnapshot.exists());
                 if (dataSnapshot.exists()) {
-                    loadUserFromDB(currentUser);
+                    loadUserFromDB(currentUser, listener);
                 } else {
-                    createNewUserDB(currentUser);
+                    createNewUserDB(currentUser, listener);
                 }
-                screenSwitchListener.switchScreen();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("FirebaseError", "Error retrieving data: " + error.getMessage());
+                listener.onFailure("Error retrieving data: " + error.getMessage());
             }
         });
     }
 
-    private void createNewUserDB(@NonNull FirebaseUser currentUser) {
+    private void createNewUserDB(@NonNull FirebaseUser currentUser, OnAuthCompleteListener listener) {
         UserDB userDB = UserDB.getInstance();
         userDB.setName(currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "No Name");
         userDB.setEmail(currentUser.getEmail() != null ? currentUser.getEmail() : "No Email");
-        reference.child(currentUser.getUid()).setValue(userDB);
+        reference.child(currentUser.getUid()).setValue(userDB).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                listener.onSuccess();
+            } else {
+                Log.e("FirebaseError", "Error creating new user: " + task.getException().getMessage());
+                listener.onFailure("Error creating new user: " + task.getException().getMessage());
+            }
+        });
     }
 
-    private void loadUserFromDB(@NonNull FirebaseUser currentUser) {
+    private void loadUserFromDB(@NonNull FirebaseUser currentUser, OnAuthCompleteListener listener) {
         reference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -133,13 +120,22 @@ public class AuthService {
                     userDB.setEmail(currentUser.getEmail());
                     userDB.setPhotoUrl(String.valueOf(currentUser.getPhotoUrl()));
                     UserDB.getInstance().setUser(userDB);
+                    listener.onSuccess();
+                } else {
+                    listener.onFailure("Error loading user data");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("FirebaseError", "Error loading user: " + error.getMessage());
+                listener.onFailure("Error loading user: " + error.getMessage());
             }
         });
+    }
+
+    public interface OnAuthCompleteListener {
+        void onSuccess();
+        void onFailure(String errorMessage);
     }
 }

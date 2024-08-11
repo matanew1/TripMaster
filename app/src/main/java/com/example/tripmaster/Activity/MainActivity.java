@@ -1,75 +1,118 @@
 package com.example.tripmaster.Activity;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import com.example.tripmaster.Model.UserDB;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.tripmaster.R;
 import com.example.tripmaster.Service.AuthService;
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
-import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements IScreenSwitch {
     private AuthService authService;
+
+    private EditText emailEditText;
+    private EditText passwordEditText;
+    private Button signInButton;
+    private Button registerButton;
+    private TextView errorTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize FirebaseApp if needed
-        if (!FirebaseApp.getApps(this).isEmpty()) {
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        } else {
-            FirebaseApp.initializeApp(this);
-        }
+        authService = new AuthService();
 
-        // Initialize AuthService
-        authService = new AuthService(signInLauncher, this);
+        initViews();
     }
 
-    // Register ActivityResultLauncher for FirebaseAuthUIActivityResultContract
-    private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
-            new FirebaseAuthUIActivityResultContract(),
-            this::onSignInResult
-    );
+    private void initViews() {
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+        signInButton = findViewById(R.id.signInButton);
+        registerButton = findViewById(R.id.registerButton);
+        errorTextView = findViewById(R.id.errorTextView);
 
-    // Handle result from the sign-in flow
-    private void onSignInResult(@NonNull FirebaseAuthUIAuthenticationResult result) {
-        IdpResponse response = result.getIdpResponse();
-        if (result.getResultCode() == RESULT_OK) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                UserDB.init(user);
-                authService.checkAlreadyExists(user);
-            }
-        } else {
-            if (response == null) {
-                // Sign-in was canceled by the user
-                Log.d("Auth", "Sign-in cancelled by user.");
-            } else {
-                // Handle sign-in errors
-                Exception exception = response.getError();
-                if (exception != null) {
-                    Log.e("Auth", "Sign-in failed: " + exception.getMessage());
-                }
-            }
-        }
+        signInButton.setOnClickListener(v -> signInUser());
+        registerButton.setOnClickListener(v -> registerUser());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        authService.login();
+        init();
+    }
+
+    private void init() {
+        if (authService.getmAuth().getCurrentUser() == null) {
+            showSignInUI();
+        } else {
+            authService.checkUserExistence(authService.getmAuth().getCurrentUser(), new AuthService.OnAuthCompleteListener() {
+                @Override
+                public void onSuccess() {
+                    switchScreen();
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    Log.e("Auth", errorMessage);
+                    errorTextView.setText(errorMessage);
+                    errorTextView.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+    }
+
+    private void showSignInUI() {
+        emailEditText.setVisibility(View.VISIBLE);
+        passwordEditText.setVisibility(View.VISIBLE);
+        signInButton.setVisibility(View.VISIBLE);
+        registerButton.setVisibility(View.VISIBLE);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void signInUser() {
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
+
+        authService.signInUser(email, password, new AuthService.OnAuthCompleteListener() {
+            @Override
+            public void onSuccess() {
+                switchScreen();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                errorTextView.setText(errorMessage);
+                errorTextView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void registerUser() {
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
+
+        authService.registerUser(email, password, new AuthService.OnAuthCompleteListener() {
+            @Override
+            public void onSuccess() {
+                switchScreen();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                errorTextView.setText(errorMessage);
+                errorTextView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

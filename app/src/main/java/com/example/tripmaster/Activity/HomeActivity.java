@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,9 @@ import com.example.tripmaster.Data.DataManager;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
 import com.example.tripmaster.Service.DatabaseService;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -145,8 +149,12 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
     }
 
     private void logout() {
-        firebaseAuth.signOut();
-        switchScreen();
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(task -> {
+                    firebaseAuth.signOut();
+                    switchScreen();
+                });
     }
 
     private void loadMenuFragment() {
