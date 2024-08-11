@@ -122,7 +122,7 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
 
     private void loadUserProfileBackground(FirebaseUser currentUser) {
         FileStorageService fileStorageService = new FileStorageService();
-        String filePath = "uploads/" + currentUser.getUid() + "/" + currentUser.getPhotoUrl(); // Adjust the path as necessary
+        String filePath = "uploads/" + currentUser.getUid() + "/" + currentTrip.getFileImgName(); // Adjust the path as necessary
 
         fileStorageService.downloadFileImage(filePath, new FileStorageService.FileDownloadCallback() {
             @Override
