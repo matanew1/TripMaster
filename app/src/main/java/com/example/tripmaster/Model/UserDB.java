@@ -1,5 +1,6 @@
 package com.example.tripmaster.Model;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -7,9 +8,12 @@ import androidx.annotation.NonNull;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class UserDB implements Serializable {
 
@@ -18,7 +22,8 @@ public class UserDB implements Serializable {
     private Map<String, Trip> allTrips;
     private String name;
     private String email;
-    private String photoUrl; // Add photo URL field
+    private String photoUrl;
+    private String since;// Add photo URL field
     private static UserDB userDB = null;
 
     private UserDB() {
@@ -27,9 +32,15 @@ public class UserDB implements Serializable {
 
     private UserDB(@NonNull FirebaseUser currentUser) {
         allTrips = new HashMap<>();
-        this.name = currentUser.getDisplayName();
+        this.name = Objects.requireNonNull(currentUser.getEmail()).split("@")[0];
         this.email = currentUser.getEmail();
         this.photoUrl = String.valueOf(currentUser.getPhotoUrl()); // Initialize photo URL field
+        if (this.since == null) {
+            Date date = new Date();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            this.since =  "Since: "+formatter.format(date);
+        }
+
     }
 
     @NonNull
@@ -41,6 +52,22 @@ public class UserDB implements Serializable {
                 ", email='" + email + '\'' +
                 ", photoUrl='" + photoUrl + '\'' +
                 '}';
+    }
+
+    public static UserDB getUserDB() {
+        return userDB;
+    }
+
+    public static void setUserDB(UserDB userDB) {
+        UserDB.userDB = userDB;
+    }
+
+    public String getSince() {
+        return since;
+    }
+
+    public void setSince(String since) {
+        this.since = since;
     }
 
     public static void init(FirebaseUser currentUser) {
@@ -65,6 +92,7 @@ public class UserDB implements Serializable {
         this.email = user.email;
         this.photoUrl = user.photoUrl; // Set photo URL field
         this.allTrips = user.allTrips;
+        this.since = user.since;
     }
 
     public ArrayList<Trip> getAllTrips() {

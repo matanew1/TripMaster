@@ -25,7 +25,7 @@ public class ProfileActivity extends AppCompatActivity implements IScreenSwitch 
     private FileStorageService fileStorageService;
     private Button backButton;
     private ImageView profileImage;
-    private TextView fullName, address, email, phone;
+    private TextView fullName, since, email, phone;
     private UserDB currentUser;
 
     @Override
@@ -85,12 +85,13 @@ public class ProfileActivity extends AppCompatActivity implements IScreenSwitch 
         profileImage = findViewById(R.id.profile_image_view);
         fullName = findViewById(R.id.full_name_profile);
         email = findViewById(R.id.email_user);
+        since = findViewById(R.id.since_user);
         currentUser = UserDB.getCurrentUser();
 
         if (currentUser != null) {
             fullName.setText(currentUser.getName());
             email.setText(currentUser.getEmail());
-
+            since.setText(currentUser.getSince());
             String profileImageUrl = currentUser.getPhotoUrl();
             if (profileImageUrl != null) {
                 String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
