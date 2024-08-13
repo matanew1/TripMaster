@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,6 +41,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
     private DataManager dataManager;
     private Button globalTripsBtn, myTripsBtn;
     private EditText searchBar;
+    private TextView customTitleTrip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         setupSearchBarListener();
 
         setGlobalTrips();
-        setButtonState(globalTripsBtn, myTripsBtn);
+        setButtonState(myTripsBtn, globalTripsBtn);
     }
 
     private void initializeFirebase() {
@@ -71,6 +73,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         globalTripsBtn = findViewById(R.id.global_trips);
         myTripsBtn = findViewById(R.id.my_trips);
         searchBar = findViewById(R.id.search_bar);
+        customTitleTrip = findViewById(R.id.customTitle);
         findViewById(R.id.logout_button).setOnClickListener(v -> logout());
     }
 
@@ -86,12 +89,14 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         myTripsBtn.setOnClickListener(v -> {
             searchBar.setText("");
             setMyTrips();
+            customTitleTrip.setText(R.string.my_trips_home);
             setButtonState(myTripsBtn, globalTripsBtn);
         });
 
         globalTripsBtn.setOnClickListener(v -> {
             searchBar.setText("");
             setGlobalTrips();
+            customTitleTrip.setText(R.string.all_public_trips);
             setButtonState(globalTripsBtn, myTripsBtn);
         });
     }
@@ -136,6 +141,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         if (currentUser != null) {
             dataManager.getDatabaseService().loadMyTrips(currentUser, new TripsLoadCallback());
         } else {
+
             Log.w("HomeActivity", "No user is currently logged in.");
         }
     }

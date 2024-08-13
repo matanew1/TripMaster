@@ -60,7 +60,7 @@
         app:layout_constraintTop_toBottomOf="@id/search_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="14dp">
 
         <Button
             android:id="@+id/global_trips"
@@ -70,6 +70,21 @@
             android:text="@string/global"
             android:backgroundTint="@color/white"
             android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/customTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/global_my_trip"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/tab_layout"
+            app:layout_constraintBottom_toTopOf="@+id/trips_list"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"/>
 
         <Button
             android:id="@+id/my_trips"
@@ -81,6 +96,8 @@
             android:textColor="@android:color/black"/>
     </LinearLayout>
 
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/trips_list"
         android:layout_width="0dp"
@@ -89,7 +106,7 @@
         app:layout_constraintBottom_toTopOf="@id/menu_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         tools:listitem="@layout/trip_item"/>

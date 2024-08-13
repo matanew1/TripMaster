@@ -59,4 +59,7 @@
     <string name="register">Register</string>
     <string name="since_date">since_date</string>
     <string name="made_by">Made by:</string>
+    <string name="global_my_trip">My Trips</string>
+    <string name="all_public_trips">All public trips</string>
+    <string name="my_trips_home">My trips</string>
 </resources>
