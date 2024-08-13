@@ -51,23 +51,23 @@ public class MainActivity extends AppCompatActivity implements IScreenSwitch {
     }
 
     private void init() {
-        if (authService.getAuth().getCurrentUser() == null) {
+//        if (authService.getAuth().getCurrentUser() == null) {
             showSignInUI();
-        } else {
-            authService.checkUserExistence(authService.getAuth().getCurrentUser(), new AuthService.OnAuthCompleteListener() {
-                @Override
-                public void onSuccess() {
-                    switchScreen();
-                }
-
-                @Override
-                public void onFailure(String errorMessage) {
-                    Log.e("Auth", errorMessage);
-                    errorTextView.setText(errorMessage);
-                    errorTextView.setVisibility(View.VISIBLE);
-                }
-            });
-        }
+//        } else {
+//            authService.checkUserExistence(authService.getAuth().getCurrentUser(), new AuthService.OnAuthCompleteListener() {
+//                @Override
+//                public void onSuccess() {
+//                    switchScreen();
+//                }
+//
+//                @Override
+//                public void onFailure(String errorMessage) {
+//                    Log.e("Auth", errorMessage);
+//                    errorTextView.setText(errorMessage);
+//                    errorTextView.setVisibility(View.VISIBLE);
+//                }
+//            });
+//        }
     }
 
     private void showSignInUI() {
@@ -82,37 +82,46 @@ public class MainActivity extends AppCompatActivity implements IScreenSwitch {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        authService.signInUser(email, password, new AuthService.OnAuthCompleteListener() {
-            @Override
-            public void onSuccess() {
-                switchScreen();
-            }
+        if(email.isEmpty() && password.isEmpty()) {
+            errorTextView.setText("Please enter email and password !");
+            errorTextView.setVisibility(View.VISIBLE);
+        } else {
+            authService.signInUser(email, password, new AuthService.OnAuthCompleteListener() {
+                @Override
+                public void onSuccess() {
+                    switchScreen();
+                }
 
-            @Override
-            public void onFailure(String errorMessage) {
-                errorTextView.setText(errorMessage);
-                errorTextView.setVisibility(View.VISIBLE);
-            }
-        });
+                @Override
+                public void onFailure(String errorMessage) {
+                    errorTextView.setText(errorMessage);
+                    errorTextView.setVisibility(View.VISIBLE);
+                }
+            });
+        }
     }
 
     @SuppressLint("SetTextI18n")
     private void registerUser() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
+        if(email.isEmpty() && password.isEmpty()) {
+            errorTextView.setText("Please enter email and password !");
+            errorTextView.setVisibility(View.VISIBLE);
+        } else {
+            authService.registerUser(email, password, new AuthService.OnAuthCompleteListener() {
+                @Override
+                public void onSuccess() {
+                    switchScreen();
+                }
 
-        authService.registerUser(email, password, new AuthService.OnAuthCompleteListener() {
-            @Override
-            public void onSuccess() {
-                switchScreen();
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-                errorTextView.setText(errorMessage);
-                errorTextView.setVisibility(View.VISIBLE);
-            }
-        });
+                @Override
+                public void onFailure(String errorMessage) {
+                    errorTextView.setText(errorMessage);
+                    errorTextView.setVisibility(View.VISIBLE);
+                }
+            });
+        }
     }
 
     @Override

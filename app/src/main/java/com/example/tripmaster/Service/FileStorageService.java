@@ -31,8 +31,7 @@ public class FileStorageService {
             return;
         }
 
-        String userId = currentUser.getUid();
-        StorageReference fileRef = storageRef.child("uploads/" + userId + "/" + fileUri.getLastPathSegment());
+        StorageReference fileRef = storageRef.child("uploads/" + fileUri.getLastPathSegment());
 
         fileRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {

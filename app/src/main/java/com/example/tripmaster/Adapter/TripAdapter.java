@@ -52,6 +52,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         public TextView tripLocation;
         public TextView tripDate;
         public TextView tripAverageRating;
+        public TextView tripMadeBy;
 
         public TripViewHolder(View view) {
             super(view);
@@ -60,6 +61,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
             tripLocation = view.findViewById(R.id.trip_location);
             tripDate = view.findViewById(R.id.trip_date);
             tripAverageRating = view.findViewById(R.id.trip_rating_avg);
+            tripMadeBy = view.findViewById(R.id.made_by);
         }
     }
 
@@ -77,7 +79,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
 
-        String filePath = "uploads/" + firebaseUser.getUid() + "/" + trip.getFileImgName();
+        String filePath = "uploads/" + trip.getFileImgName();
         fileStorageService.downloadFileImage(filePath, new FileStorageService.FileDownloadCallback() {
             @Override
             public void onSuccess(Uri fileUri) {
@@ -98,6 +100,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         holder.tripTitle.setText(trip.getTitle());
         holder.tripLocation.setText(trip.getLocation());
         holder.tripDate.setText(trip.getStartDate());
+        holder.tripMadeBy.setText(trip.getMadeBy());
+
         holder.tripAverageRating.setText("Average rating: " + trip.getAverageRating());
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TripViewActivity.class);

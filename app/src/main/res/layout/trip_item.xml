@@ -42,6 +42,16 @@
             android:text="@string/country_name"
             android:layout_marginTop="4dp"
             android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/made_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="@string/made_by"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/black"/>
+
         <TextView
             android:id="@+id/trip_rating_avg"
             android:layout_width="wrap_content"

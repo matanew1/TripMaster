@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @SuppressLint("NotifyDataSetChanged")
 public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
@@ -150,6 +151,8 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
 
     private void logout() {
         firebaseAuth.signOut();
+        tripList.clear();
+        allTrips.clear();
         switchScreen();
     }
 

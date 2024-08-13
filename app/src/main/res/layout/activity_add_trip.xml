@@ -136,6 +136,14 @@
             android:backgroundTint="#FFEB3B"
             android:textColor="@android:color/black" />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminate="true" />
+
         <!-- Save Button -->
         <Button
             android:id="@+id/save_btn"

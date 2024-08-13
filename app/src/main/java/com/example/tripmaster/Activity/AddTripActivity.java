@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,6 +47,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
     private Button cancelBtn, saveBtn, finishTripBtn, addEventBtn, uploadBtn;
     private Trip currentTrip;
     private String currentEventDate;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         finishTripBtn = findViewById(R.id.finish_trip_btn);
         addEventBtn = findViewById(R.id.add_event_btn);
         uploadBtn = findViewById(R.id.upload_btn);
+        progressBar = findViewById(R.id.progressBar);
         sharedSw = findViewById(R.id.shared);
 
         setupButtons();
@@ -80,7 +84,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
     }
 
     private void setupButtons() {
-        cancelBtn.setOnClickListener(v -> switchScreen());
+        cancelBtn.setOnClickListener(v -> cancelAddTrip());
         saveBtn.setOnClickListener(v -> saveTrip());
         finishTripBtn.setOnClickListener(v -> finishTrip());
         addEventBtn.setOnClickListener(v -> addNewEvent());
@@ -88,6 +92,12 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
         sharedSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
             currentTrip.setShared(isChecked);
         });
+    }
+
+    private void cancelAddTrip() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void setupDatePicker() {
@@ -132,16 +142,28 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
     }
 
     private void uploadFile(Uri fileUri) {
+        // Show the ProgressBar and disable the button
+        progressBar.setVisibility(View.VISIBLE);
+        uploadBtn.setEnabled(false);
+
         fileStorageService.uploadFileImage(fileUri, new FileStorageService.FileUploadCallback() {
             @Override
             public void onSuccess() {
+                // Hide the ProgressBar and enable the button
+                progressBar.setVisibility(View.GONE);
+                uploadBtn.setEnabled(true);
+
                 Toast.makeText(AddTripActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
                 currentTrip.setFileImgName(fileUri.getLastPathSegment());
-                uploadBtn.setText("File Uploaded !");
+                uploadBtn.setText("✅");
             }
 
             @Override
             public void onFailure(Exception e) {
+                // Hide the ProgressBar and enable the button
+                progressBar.setVisibility(View.GONE);
+                uploadBtn.setEnabled(true);
+
                 Toast.makeText(AddTripActivity.this, "File upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -194,6 +216,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
     private void captureTripData() {
         currentTrip.setTitle(titleTrip.getText().toString());
         currentTrip.setLocation(countryTrip.getText().toString());
+        currentTrip.setMadeBy(currentUser.getEmail());
     }
 
     private void captureEventData() {
@@ -214,6 +237,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
 
     @Override
     public void switchScreen() {
+
         Intent intent = new Intent(this, NewTripSplashActivity.class);
         startActivity(intent);
         finish();

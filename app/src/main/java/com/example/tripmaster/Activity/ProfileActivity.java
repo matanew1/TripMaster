@@ -94,8 +94,7 @@ public class ProfileActivity extends AppCompatActivity implements IScreenSwitch 
             since.setText(currentUser.getSince());
             String profileImageUrl = currentUser.getPhotoUrl();
             if (profileImageUrl != null) {
-                String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-                String filePath = "uploads/" + userId + "/" + profileImageUrl;
+                String filePath = "uploads/" + profileImageUrl;
                 loadProfileImage(filePath);
             }
         }

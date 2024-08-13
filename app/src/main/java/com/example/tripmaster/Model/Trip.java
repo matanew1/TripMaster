@@ -15,6 +15,7 @@ public class Trip implements Serializable {
     private String location;
     private HashMap<String, ArrayList<EventTrip>> eventTrips;
     private String startDate;
+    private String madeBy;
     private boolean shared;
     private ArrayList<Float> ratingList;
     private float averageRating;
@@ -29,6 +30,7 @@ public class Trip implements Serializable {
         this.shared = shared;
         this.ratingList = new ArrayList<>();
         this.averageRating = 0;
+        this.madeBy = "";
     }
 
     public Trip() {
@@ -148,5 +150,13 @@ public class Trip implements Serializable {
                 .mapToDouble(Float::doubleValue)
                 .average()
                 .orElse(0.0);
+    }
+
+    public String getMadeBy() {
+        return this.madeBy;
+    }
+
+    public void setMadeBy(String madeBy) {
+        this.madeBy = madeBy;
     }
 }
