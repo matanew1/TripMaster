@@ -87,7 +87,7 @@ public class UserDB implements Serializable {
         return getInstance();
     }
 
-    public void setUser(UserDB user) {
+    public void setUser(@NonNull UserDB user) {
         this.name = user.name;
         this.email = user.email;
         this.photoUrl = user.photoUrl; // Set photo URL field

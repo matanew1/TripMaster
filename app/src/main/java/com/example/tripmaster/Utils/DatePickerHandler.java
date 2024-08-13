@@ -12,12 +12,10 @@ import java.util.Locale;
 public class DatePickerHandler {
 
     private EditText editText;
-    private FragmentManager fragmentManager;
     private DateSelectedListener dateSelectedListener;
 
-    public DatePickerHandler(EditText editText, FragmentManager fragmentManager) {
+    public DatePickerHandler(EditText editText) {
         this.editText = editText;
-        this.fragmentManager = fragmentManager;
         setupDatePicker();
     }
 

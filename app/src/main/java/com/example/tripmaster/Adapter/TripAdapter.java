@@ -23,8 +23,6 @@ import com.example.tripmaster.Service.FileStorageService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 @SuppressLint("NotifyDataSetChanged")
@@ -73,6 +71,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         return new TripViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         Trip trip = tripList.get(position);

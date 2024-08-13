@@ -1,8 +1,5 @@
 package com.example.tripmaster.Utils;
 
-import android.net.Uri;
-
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 

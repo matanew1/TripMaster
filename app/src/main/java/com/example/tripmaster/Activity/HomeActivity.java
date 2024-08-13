@@ -21,14 +21,11 @@ import com.example.tripmaster.Data.DataManager;
 import com.example.tripmaster.Model.Trip;
 import com.example.tripmaster.R;
 import com.example.tripmaster.Service.DatabaseService;
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.tripmaster.Utils.ValidationUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 @SuppressLint("NotifyDataSetChanged")
 public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
@@ -131,28 +128,25 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         }
     }
 
-    private void setButtonState(Button selectedButton, Button otherButton) {
+    private void setButtonState(@NonNull Button selectedButton, @NonNull Button otherButton) {
         selectedButton.setBackgroundColor(getResources().getColor(R.color.button_default, getResources().newTheme()));
         otherButton.setBackgroundColor(getResources().getColor(R.color.white, getResources().newTheme()));
     }
 
     private void setMyTrips() {
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser != null) {
-            dataManager.getDatabaseService().loadMyTrips(currentUser, new TripsLoadCallback());
-        } else {
-
-            Log.w("HomeActivity", "No user is currently logged in.");
+        if (ValidationUtils.validateUserLoggedIn(this)) {
+            return;
         }
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        assert currentUser != null;
+        dataManager.getDatabaseService().loadMyTrips(currentUser, new TripsLoadCallback());
     }
 
     private void setGlobalTrips() {
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser != null) {
-            dataManager.getDatabaseService().loadGlobalTrips(new TripsLoadCallback());
-        } else {
-            Log.w("HomeActivity", "No user is currently logged in.");
+        if (ValidationUtils.validateUserLoggedIn(this)) {
+            return;
         }
+        dataManager.getDatabaseService().loadGlobalTrips(new TripsLoadCallback());
     }
 
     private void logout() {

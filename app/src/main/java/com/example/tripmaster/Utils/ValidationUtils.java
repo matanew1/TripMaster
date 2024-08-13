@@ -1,8 +1,11 @@
 package com.example.tripmaster.Utils;
 
+import android.content.Context;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ValidationUtils {
 
@@ -31,5 +34,13 @@ public class ValidationUtils {
             passwordInputLayout.setError(null);
             return true;
         }
+    }
+
+    public static boolean validateUserLoggedIn(Context context) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Toast.makeText(context, "No user is currently logged in.", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
     }
 }

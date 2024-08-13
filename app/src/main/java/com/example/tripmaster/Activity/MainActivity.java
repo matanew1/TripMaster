@@ -76,12 +76,12 @@ public class MainActivity extends AppCompatActivity implements IScreenSwitch {
         boolean isEmailValid = ValidationUtils.validateEmail(email, emailInputLayout);
         boolean isPasswordValid = ValidationUtils.validatePassword(password, passwordInputLayout);
 
-        return isEmailValid && isPasswordValid;
+        return !isEmailValid || !isPasswordValid;
     }
 
     @SuppressLint("SetTextI18n")
     private void signInUser() {
-        if (!validateFields()) {
+        if (validateFields()) {
             return;
         }
 
@@ -104,12 +104,12 @@ public class MainActivity extends AppCompatActivity implements IScreenSwitch {
 
     @SuppressLint("SetTextI18n")
     private void registerUser() {
-        if (!validateFields()) {
+        if (validateFields()) {
             return;
         }
 
-        String email = emailEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
+        String email = Objects.requireNonNull(emailEditText.getText()).toString().trim();
+        String password = Objects.requireNonNull(passwordEditText.getText()).toString().trim();
 
         authService.registerUser(email, password, new AuthService.OnAuthCompleteListener() {
             @Override

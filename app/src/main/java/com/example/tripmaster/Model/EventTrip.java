@@ -2,8 +2,6 @@ package com.example.tripmaster.Model;
 
 import androidx.annotation.NonNull;
 
-import com.google.firebase.database.core.view.Event;
-
 import java.io.Serializable;
 import java.util.UUID;
 

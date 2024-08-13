@@ -49,16 +49,8 @@ public class Trip implements Serializable {
         return averageRating;
     }
 
-    public void setAverageRating(float averageRating) {
-        this.averageRating = averageRating;
-    }
-
     public ArrayList<Float> getRatingList() {
         return ratingList;
-    }
-
-    public void setRatingList(ArrayList<Float> ratingList) {
-        this.ratingList = ratingList;
     }
 
     public String getStartDate() {
@@ -99,10 +91,6 @@ public class Trip implements Serializable {
 
     public HashMap<String, ArrayList<EventTrip>> getEventTrips() {
         return eventTrips;
-    }
-
-    public void setEventTrips(HashMap<String, ArrayList<EventTrip>> eventTrips) {
-        this.eventTrips = eventTrips;
     }
 
     public String getId() {

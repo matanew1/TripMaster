@@ -21,15 +21,6 @@ public enum EventTypeEnum {
         return label;
     }
 
-    public static EventTypeEnum fromLabel(String label) {
-        for (EventTypeEnum type : values()) {
-            if (type.getLabel().equals(label)) {
-                return type;
-            }
-        }
-        return EMPTY; // Default value if not found
-    }
-
     public int getImageResource() {
         switch (this) {
             case FLIGHT:

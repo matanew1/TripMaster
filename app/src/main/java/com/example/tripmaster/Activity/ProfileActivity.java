@@ -1,5 +1,7 @@
 package com.example.tripmaster.Activity;
 
+import static com.example.tripmaster.Utils.Consts.PICK_FILE_REQUEST;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,17 +17,12 @@ import com.example.tripmaster.Data.DataManager;
 import com.example.tripmaster.Model.UserDB;
 import com.example.tripmaster.R;
 import com.example.tripmaster.Service.FileStorageService;
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity implements IScreenSwitch {
 
-    private static final int PICK_FILE_REQUEST = 1;
     private FileStorageService fileStorageService;
     private Button backButton;
     private ImageView profileImage;
-    private TextView fullName, since, email, phone;
     private UserDB currentUser;
 
     @Override
@@ -83,9 +80,9 @@ public class ProfileActivity extends AppCompatActivity implements IScreenSwitch 
     private void initViews() {
         backButton = findViewById(R.id.back_button);
         profileImage = findViewById(R.id.profile_image_view);
-        fullName = findViewById(R.id.full_name_profile);
-        email = findViewById(R.id.email_user);
-        since = findViewById(R.id.since_user);
+        TextView fullName = findViewById(R.id.full_name_profile);
+        TextView email = findViewById(R.id.email_user);
+        TextView since = findViewById(R.id.since_user);
         currentUser = UserDB.getCurrentUser();
 
         if (currentUser != null) {

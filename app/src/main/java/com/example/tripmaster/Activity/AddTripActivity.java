@@ -101,7 +101,7 @@ public class AddTripActivity extends AppCompatActivity implements IScreenSwitch 
     }
 
     private void setupDatePicker() {
-        DatePickerHandler datePickerHandler = new DatePickerHandler(etDate, getSupportFragmentManager());
+        DatePickerHandler datePickerHandler = new DatePickerHandler(etDate);
         datePickerHandler.setDateSelectedListener(date -> {
             if (date != null && !date.isEmpty()) {
                 currentEventDate = date;

@@ -1,16 +1,13 @@
 package com.example.tripmaster.Activity;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,7 +33,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class TripViewActivity extends AppCompatActivity implements IScreenSwitch, DaysTripAdapter.OnDateClickListener {
 
@@ -65,7 +61,7 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         // Load photo URL from current user and set background
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
-            loadUserProfileBackground(currentUser);
+            loadUserProfileBackground();
         }
 
         RatingBar myRatingSlider = findViewById(R.id.rating_bar);
@@ -120,7 +116,7 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         }
     }
 
-    private void loadUserProfileBackground(FirebaseUser currentUser) {
+    private void loadUserProfileBackground() {
         FileStorageService fileStorageService = new FileStorageService();
         String filePath = "uploads/" + currentTrip.getFileImgName(); // Adjust the path as necessary
 
