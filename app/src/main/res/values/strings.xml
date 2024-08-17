@@ -62,4 +62,5 @@
     <string name="global_my_trip">My Trips</string>
     <string name="all_public_trips">All public trips</string>
     <string name="my_trips_home">My trips</string>
+    <string name="country_hint">Country</string>
 </resources>
