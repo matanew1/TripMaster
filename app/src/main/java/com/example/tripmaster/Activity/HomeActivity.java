@@ -56,7 +56,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         setupButtonListeners();
         setupSearchBarListener();
 
-        setGlobalTrips();
+        setMyTrips();
         setButtonState(myTripsBtn, globalTripsBtn);
     }
 

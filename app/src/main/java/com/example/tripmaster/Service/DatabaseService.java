@@ -67,7 +67,8 @@ public class DatabaseService {
     public void loadGlobalTrips(final TripsLoadCallback callback) {
         fetchData(userDatabaseReference, snapshot -> {
             List<Trip> globalTripsList = StreamSupport.stream(snapshot.getChildren().spliterator(), false)
-                    .flatMap(userSnapshot -> StreamSupport.stream(userSnapshot.child("allTrips").getChildren().spliterator(), false)
+                    .flatMap(userSnapshot -> StreamSupport.stream(userSnapshot.child("allTrips")
+                                    .getChildren().spliterator(), false)
                             .map(tripSnapshot -> tripSnapshot.getValue(Trip.class))
                             .filter(trip -> trip != null && trip.isShared())
                     )
@@ -79,7 +80,7 @@ public class DatabaseService {
         });
     }
 
-    public void updateGlobalTrip(@NonNull Trip trip) {
+    public void updateAllTrips(@NonNull Trip trip) {
         String tripId = trip.getId();
         fetchData(userDatabaseReference, snapshot -> {
             for (DataSnapshot userSnapshot : snapshot.getChildren()) {

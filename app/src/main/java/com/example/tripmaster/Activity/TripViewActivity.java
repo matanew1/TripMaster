@@ -1,5 +1,7 @@
 package com.example.tripmaster.Activity;
 
+import static com.example.tripmaster.Utils.Consts.PICK_FILE_REQUEST;
+
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -13,7 +15,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,17 +35,26 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("all")
 public class TripViewActivity extends AppCompatActivity implements IScreenSwitch, DaysTripAdapter.OnDateClickListener {
 
     private static final String TAG = "TripViewActivity"; // Tag for logging
 
     private Trip currentTrip;
     private EventTripViewAdapter eventTripViewAdapter;
+    private LinearLayout bgTripView;
+    private FileStorageService fileStorageService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_data);
+
+        FirebaseUser currentUser1 = FirebaseAuth.getInstance().getCurrentUser();
+        DataManager dataManager1 = DataManager.getInstance();
+        dataManager1.initialize(currentUser1);
+
+        fileStorageService = new FileStorageService();
 
         // Initialize currentTrip
         if (getIntent() != null && getIntent().hasExtra("clicked_trip")) {
@@ -58,20 +68,18 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
             loadRatingFragment();
         }
 
+
+        bgTripView = findViewById(R.id.bg_trip);
         // Load photo URL from current user and set background
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             loadUserProfileBackground();
         }
 
+        bgTripView.setOnClickListener(v -> openFilePicker());
+
+
         RatingBar myRatingSlider = findViewById(R.id.rating_bar);
-        myRatingSlider.setRating(currentTrip.getAverageRating());
-        myRatingSlider.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
-            if (fromUser) {
-                Log.d(TAG, "New average rating: " + rating);
-                refreshRatingFragment(rating);
-            }
-        });
 
         Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> {
@@ -87,7 +95,7 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
 
             // Save the trip data
             DataManager dataManager = DataManager.getInstance();
-            dataManager.getDatabaseService().updateGlobalTrip(currentTrip);
+            dataManager.getDatabaseService().updateAllTrips(currentTrip);
             Log.d(TAG, "Updated average rating: " + currentTrip.getAverageRating());
 
             // Switch to the HomeActivity
@@ -116,6 +124,39 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         }
     }
 
+    private void openFilePicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        startActivityForResult(Intent.createChooser(intent, "Select a file"), PICK_FILE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_FILE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri fileUri = data.getData();
+            uploadFile(fileUri);
+        }
+    }
+
+
+    private void uploadFile(Uri fileUri) {
+        fileStorageService.uploadFileImage(fileUri, new FileStorageService.FileUploadCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(TripViewActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
+                currentTrip.setFileImgName(fileUri.getLastPathSegment());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(TripViewActivity.this, "File upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     private void loadUserProfileBackground() {
         FileStorageService fileStorageService = new FileStorageService();
         String filePath = "uploads/" + currentTrip.getFileImgName(); // Adjust the path as necessary
@@ -123,13 +164,12 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         fileStorageService.downloadFileImage(filePath, new FileStorageService.FileDownloadCallback() {
             @Override
             public void onSuccess(Uri fileUri) {
-                LinearLayout linearLayout = findViewById(R.id.bg_trip);
                 Glide.with(TripViewActivity.this)
                         .load(fileUri)
                         .into(new CustomTarget<Drawable>() {
                             @Override
                             public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                linearLayout.setBackground(resource);
+                                bgTripView.setBackground(resource);
                             }
 
                             @Override
@@ -146,17 +186,6 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
             }
         });
     }
-
-    private void refreshRatingFragment(float rating) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        RatingFragment fragment = (RatingFragment) fragmentManager.findFragmentById(R.id.rating_frag);
-        if (fragment != null) {
-            fragment.updateRating(rating);
-        } else {
-            Log.d(TAG, "RatingFragment is null");
-        }
-    }
-
 
     @Override
     public void onDateClick(String date) {

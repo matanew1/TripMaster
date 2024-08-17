@@ -44,7 +44,7 @@
     <string name="global">Global</string>
     <string name="average_rating">0.0</string>
     <string name="icon_rating">icon_rating</string>
-    <string name="your_rating">Your rating</string>
+    <string name="your_rating">Slide for your rating</string>
     <string name="add_rating">add rating</string>
     <string name="average_rating_0">Average rating: 0</string>
     <string name="circle">circle</string>
@@ -63,4 +63,5 @@
     <string name="all_public_trips">All public trips</string>
     <string name="my_trips_home">My trips</string>
     <string name="country_hint">Country</string>
+    <string name="average">Average</string>
 </resources>

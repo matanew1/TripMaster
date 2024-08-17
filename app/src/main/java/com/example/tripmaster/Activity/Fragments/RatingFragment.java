@@ -21,6 +21,7 @@ public class RatingFragment extends Fragment {
 
     private Trip trip;
 
+    @NonNull
     public static RatingFragment newInstance(Trip trip) {
         RatingFragment fragment = new RatingFragment();
         Bundle args = new Bundle();

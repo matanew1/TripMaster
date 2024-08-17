@@ -8,15 +8,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/average_rating_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/average"
+            app:layout_constraintStart_toStartOf="@id/icon_rating"
+            app:layout_constraintTop_toTopOf="@id/icon_rating"
+            app:layout_constraintEnd_toEndOf="@id/icon_rating"
+            android:padding="2dp"
+            android:textSize="11sp" />
+
+
         <ImageView
             android:id="@+id/icon_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/icon_rating"
             android:src="@drawable/ic_rating"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="25dp"
             android:layout_marginStart="45dp"
-            android:padding="5dp"
+            android:padding="14dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="#E9CD33" />
