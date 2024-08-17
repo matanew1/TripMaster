@@ -15,6 +15,7 @@ import com.example.tripmaster.R;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("all")
 @SuppressLint("NotifyDataSetChanged")
 public class DaysTripAdapter extends RecyclerView.Adapter<DaysTripAdapter.ViewHolder> {
 

@@ -1,7 +1,6 @@
 package com.example.tripmaster.Model;
 
 import android.annotation.SuppressLint;
-import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
@@ -15,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@SuppressWarnings("all")
 public class UserDB implements Serializable {
 
     private static final long serialVersionUID = 1L; // Add serialVersionUID

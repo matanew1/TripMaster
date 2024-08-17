@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.Objects;
 
+@SuppressWarnings("all")
 @SuppressLint("NotifyDataSetChanged")
 public class AddTripActivity extends AppCompatActivity implements IScreenSwitch {
 

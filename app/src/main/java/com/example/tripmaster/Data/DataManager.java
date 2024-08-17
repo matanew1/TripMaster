@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("all")
 public class DataManager {
     private static DataManager instance;
     private ArrayList<Trip> trips;

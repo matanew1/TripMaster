@@ -15,6 +15,7 @@ import com.example.tripmaster.R;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("all")
 @SuppressLint("NotifyDataSetChanged")
 public class EventTripViewAdapter extends RecyclerView.Adapter<EventTripViewAdapter.EventTripViewHolder> {
 

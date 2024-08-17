@@ -3,12 +3,11 @@ package com.example.tripmaster.Utils;
 import android.app.DatePickerDialog;
 import android.widget.EditText;
 
-import androidx.fragment.app.FragmentManager;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+@SuppressWarnings("all")
 public class DatePickerHandler {
 
     private EditText editText;

@@ -1,7 +1,6 @@
 package com.example.tripmaster.Service;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

@@ -113,7 +113,7 @@ public class HomeActivity extends AppCompatActivity implements IScreenSwitch {
         });
     }
 
-    private void filterTrips(String query) {
+    private void filterTrips(@NonNull String query) {
         if (query.isEmpty()) {
             tripAdapter.updateTrips(new ArrayList<>(allTrips));
         } else {

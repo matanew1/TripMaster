@@ -32,6 +32,7 @@ public class ProfileActivity extends AppCompatActivity implements IScreenSwitch 
 
         fileStorageService = new FileStorageService();
 
+
         initViews();
         setUpDataAndListeners();
     }

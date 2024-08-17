@@ -20,6 +20,7 @@ import com.example.tripmaster.R;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("all")
 public class EventTripAdapter extends RecyclerView.Adapter<EventTripAdapter.EventTripViewHolder> {
 
     private ArrayList<EventTrip> eventList;

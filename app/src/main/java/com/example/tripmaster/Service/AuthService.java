@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@SuppressWarnings("all")
 public class AuthService {
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
@@ -119,6 +120,7 @@ public class AuthService {
                     }
                     userDB.setEmail(currentUser.getEmail());
                     userDB.setPhotoUrl(String.valueOf(currentUser.getPhotoUrl()));
+                    userDB.setSince(Objects.requireNonNull(snapshot.child("since").getValue()).toString());
                     listener.onSuccess();
                 } else {
                     listener.onFailure("UserDB instance is null");

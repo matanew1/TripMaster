@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+@SuppressWarnings("all")
 public class Trip implements Serializable {
 
     private static final long serialVersionUID = 1L;
