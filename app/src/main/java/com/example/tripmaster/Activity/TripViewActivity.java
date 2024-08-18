@@ -35,7 +35,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("all")
 public class TripViewActivity extends AppCompatActivity implements IScreenSwitch, DaysTripAdapter.OnDateClickListener {
 
     private static final String TAG = "TripViewActivity"; // Tag for logging
@@ -75,8 +74,6 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
         if (currentUser != null) {
             loadUserProfileBackground();
         }
-
-        bgTripView.setOnClickListener(v -> openFilePicker());
 
 
         RatingBar myRatingSlider = findViewById(R.id.rating_bar);
@@ -122,12 +119,6 @@ public class TripViewActivity extends AppCompatActivity implements IScreenSwitch
             ArrayList<EventTrip> events = new ArrayList<>(currentTrip.getEventTrips().getOrDefault(defaultDate, new ArrayList<>()));
             eventTripViewAdapter.updateEvents(events);
         }
-    }
-
-    private void openFilePicker() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        startActivityForResult(Intent.createChooser(intent, "Select a file"), PICK_FILE_REQUEST);
     }
 
     @Override
